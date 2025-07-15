@@ -2,10 +2,10 @@ import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 
 import { env } from '@/env';
-
 import { Database } from '@/types/supabase';
 
 export async function updateSession(request: NextRequest) {
+  const url = request.nextUrl.clone();
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -22,9 +22,7 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
+          supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
@@ -33,8 +31,16 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // refreshing the auth token
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const isProtectedPath = url.pathname.startsWith('/dashboard');
+
+  if (isProtectedPath && !user) {
+    url.pathname = '/auth/login';
+    return NextResponse.redirect(url);
+  }
 
   return supabaseResponse;
 }
