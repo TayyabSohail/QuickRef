@@ -28,7 +28,7 @@ export async function getSnippets() {
     .select('*')
     .order('created_at', { ascending: false });
   if (error) throw new Error(error.message);
-  return data;
+  return data ?? [];
 }
 
 export async function updateSnippet(
