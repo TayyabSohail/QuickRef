@@ -52,6 +52,7 @@ export default function SnippetSheet() {
       language: selectedLang,
       content: '',
       description: '',
+      visibility: 'public',
     },
   });
 
@@ -108,6 +109,19 @@ export default function SnippetSheet() {
               </select>
             </div>
 
+            {/* Visibility */}
+            <div className='grid gap-2'>
+              <Label htmlFor='visibility'>Visibility</Label>
+              <select
+                id='visibility'
+                className='rounded-md border px-3 py-2'
+                {...form.register('visibility')}
+              >
+                <option value='public'>Public</option>
+                <option value='private'>Private</option>
+              </select>
+            </div>
+
             {/* Code Editor */}
             <div className='grid gap-2'>
               <Label htmlFor='content'>Code</Label>
@@ -137,7 +151,7 @@ export default function SnippetSheet() {
               />
             </div>
 
-            {/* Buttons - moved here and aligned left */}
+            {/* Buttons */}
             <div className='mt-4 flex gap-2'>
               <Button type='submit' disabled={mutation.isPending}>
                 {mutation.isPending ? 'Saving...' : 'Save Snippet'}

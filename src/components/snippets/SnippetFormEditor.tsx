@@ -51,6 +51,7 @@ export default function SnippetFormEditor({
       language: 'javascript',
       content: '',
       description: '',
+      visibility: 'public',
     },
   });
 
@@ -62,22 +63,44 @@ export default function SnippetFormEditor({
       onSubmit={form.handleSubmit(onSubmit)}
       className='flex flex-col gap-4 py-4'
     >
-      {/* Language Dropdown */}
-      <div className='grid gap-2'>
-        <Label htmlFor='language'>Language</Label>
-        <select
-          id='language'
-          className='rounded-md border px-3 py-2'
-          disabled={isReadOnly}
-          value={selectedLang}
-          onChange={(e) => form.setValue('language', e.target.value)}
-        >
-          {languageOptions.map((lang) => (
-            <option key={lang} value={lang}>
-              {lang}
-            </option>
-          ))}
-        </select>
+      <div className='flex flex-col gap-4 md:flex-row'>
+        {/* Language dropdown */}
+        <div className='grid flex-1 gap-2'>
+          <Label htmlFor='language'>Language</Label>
+          <select
+            id='language'
+            className='rounded-md border px-3 py-2'
+            disabled={isReadOnly}
+            value={selectedLang}
+            onChange={(e) => form.setValue('language', e.target.value)}
+          >
+            {languageOptions.map((lang) => (
+              <option key={lang} value={lang}>
+                {lang}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Visibility dropdown */}
+        <div className='grid flex-1 gap-2'>
+          <Label htmlFor='visibility'>Visibility</Label>
+          <select
+            id='visibility'
+            className='rounded-md border px-3 py-2'
+            disabled={isReadOnly}
+            value={form.watch('visibility')}
+            onChange={(e) =>
+              form.setValue(
+                'visibility',
+                e.target.value as 'private' | 'public',
+              )
+            }
+          >
+            <option value='private'>Private</option>
+            <option value='public'>Public</option>
+          </select>
+        </div>
       </div>
 
       {/* Monaco Code Editor */}
