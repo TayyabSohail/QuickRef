@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { getSnippets } from '@/actions/snippet';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { getSnippets, deleteSnippet } from '@/actions/snippet';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import SnippetSheet from './SnippetSheet';
@@ -15,7 +15,8 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import SnippetModal from './SnippetModal';
-import { Plus } from 'lucide-react';
+import { Trash } from 'lucide-react';
+import { toast } from 'sonner';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,9 +34,21 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
   const [filterMine, setFilterMine] = useState(false);
   const [selected, setSelected] = useState<any | null>(null);
 
+  const queryClient = useQueryClient();
+
   const { data: snippets = [], error } = useQuery({
     queryKey: ['snippets'],
     queryFn: getSnippets,
+  });
+
+  // ✅ Add delete mutation here
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => deleteSnippet(id),
+    onSuccess: () => {
+      toast.success('Snippet deleted');
+      queryClient.invalidateQueries({ queryKey: ['snippets'] });
+    },
+    onError: (err) => toast.error(err.message),
   });
 
   const filteredSnippets =
@@ -99,10 +112,20 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
                   <TableCell className='max-w-[200px] truncate'>
                     {snippet.description}
                   </TableCell>
-                  <TableCell>
+                  <TableCell className='flex gap-2'>
                     <Button size='sm' onClick={() => setSelected(snippet)}>
                       View
                     </Button>
+
+                    {isOwner && (
+                      <Button
+                        size='sm'
+                        variant='destructive'
+                        onClick={() => deleteMutation.mutate(snippet.id)}
+                      >
+                        <Trash className='h-4 w-4' />
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               );
