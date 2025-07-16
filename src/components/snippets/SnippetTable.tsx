@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getSnippets } from '@/actions/snippet';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import SnippetSheet from './SnippetSheet';
 import {
   Table,
   TableHeader,
@@ -67,11 +68,7 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
           </DropdownMenu>
 
           {/* Add New Snippet - visible to all logged-in users */}
-          {user && (
-            <Button variant='default' onClick={() => setSelected({})}>
-              <Plus className='mr-1 h-4 w-4' /> New Snippet
-            </Button>
-          )}
+          {user && <SnippetSheet />}
         </div>
       </div>
 
