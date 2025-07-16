@@ -44,19 +44,11 @@ export async function updateSnippet(
   updates: Partial<z.infer<typeof snippetSchema>>,
 ) {
   const supabase = await createSupabaseServerClient();
-  const user = await supabase.auth.getUser();
-  if (!user.data.user) return { error: 'Not authenticated' };
-
   const { error } = await supabase
     .from('snippets')
     .update(updates)
-    .eq('id', id)
-    .eq('user_id', user.data.user.id);
-
-  if (error) {
-    if (error.code === '42501') return { error: 'Permission denied' };
-  }
-
+    .eq('id', id);
+  if (error) return { error: error.message };
   return { success: true };
 }
 
