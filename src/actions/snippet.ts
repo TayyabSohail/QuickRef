@@ -36,17 +36,37 @@ export async function updateSnippet(
   updates: Partial<z.infer<typeof snippetSchema>>,
 ) {
   const supabase = await createSupabaseServerClient();
+  const user = await supabase.auth.getUser();
+  if (!user.data.user) return { error: 'Not authenticated' };
+
   const { error } = await supabase
     .from('snippets')
     .update(updates)
-    .eq('id', id);
-  if (error) return { error: error.message };
+    .eq('id', id)
+    .eq('user_id', user.data.user.id);
+
+  if (error) {
+    if (error.code === '42501') return { error: 'Permission denied' };
+  }
+
   return { success: true };
 }
 
 export async function deleteSnippet(id: string) {
   const supabase = await createSupabaseServerClient();
-  const { error } = await supabase.from('snippets').delete().eq('id', id);
-  if (error) return { error: error.message };
+  const user = await supabase.auth.getUser();
+  if (!user.data.user) return { error: 'Not authenticated' };
+
+  const { error } = await supabase
+    .from('snippets')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.data.user.id);
+
+  if (error) {
+    if (error.code === '42501') return { error: 'Permission denied' };
+    return { error: error.message };
+  }
+
   return { success: true };
 }
