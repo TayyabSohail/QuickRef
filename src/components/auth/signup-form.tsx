@@ -2,8 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { register } from '@/actions/actions';
-import { login } from '@/actions/actions';
+import { register } from '@/actions/auth';
+import { login } from '@/actions/auth';
 import { registerSchema } from '@/schemas/auth';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

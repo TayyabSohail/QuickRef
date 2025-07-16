@@ -24,7 +24,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema } from '@/schemas/auth';
-import { login } from '@/actions/actions';
+import { login } from '@/actions/auth';
 import * as z from 'zod';
 
 type LoginFormValues = z.infer<typeof loginSchema>;
