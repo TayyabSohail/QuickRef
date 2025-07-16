@@ -33,15 +33,13 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
   const { user, isLoading: userLoading } = useUser();
   const [filterMine, setFilterMine] = useState(false);
   const [selected, setSelected] = useState<any | null>(null);
-
   const queryClient = useQueryClient();
 
   const { data: snippets = [], error } = useQuery({
-    queryKey: ['snippets'],
-    queryFn: getSnippets,
+    queryKey: ['snippets', filterMine],
+    queryFn: () => getSnippets(filterMine),
   });
 
-  // ✅ Add delete mutation here
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteSnippet(id),
     onSuccess: () => {
@@ -51,10 +49,7 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
     onError: (err) => toast.error(err.message),
   });
 
-  const filteredSnippets =
-    filterMine && user
-      ? snippets.filter((s) => s.user_id === user.id)
-      : snippets;
+  const filteredSnippets = snippets;
 
   return (
     <div className='space-y-4'>

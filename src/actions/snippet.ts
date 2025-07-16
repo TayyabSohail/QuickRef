@@ -21,12 +21,20 @@ export async function createSnippet(data: z.infer<typeof snippetSchema>) {
   return { success: true };
 }
 
-export async function getSnippets() {
+export async function getSnippets(filterMine = false) {
   const supabase = await createSupabaseServerClient();
-  const { data, error } = await supabase
+  const user = await supabase.auth.getUser();
+
+  let query = supabase
     .from('snippets')
     .select('*')
     .order('created_at', { ascending: false });
+
+  if (filterMine && user.data.user) {
+    query = query.eq('user_id', user.data.user.id);
+  }
+
+  const { data, error } = await query;
   if (error) throw new Error(error.message);
   return data ?? [];
 }
