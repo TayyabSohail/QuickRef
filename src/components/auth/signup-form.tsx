@@ -50,7 +50,7 @@ export function SignupForm({
     if (result?.error) {
       setErrorMessage(result.error);
     } else {
-      router.push('/auth/verify-email');
+      router.replace('/auth/verify-email');
     }
   };
   return (

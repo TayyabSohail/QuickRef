@@ -52,7 +52,7 @@ export function LoginForm({
         toast.error(result.error);
         return;
       }
-      router.push('/dashboard');
+      router.replace('/dashboard');
     });
   };
 
