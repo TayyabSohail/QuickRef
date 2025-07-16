@@ -24,18 +24,19 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useUser } from '@/hooks/useUser';
+import { cn } from '@/lib/utils';
 
 type SnippetTableProps = {
   showCreate?: boolean;
 };
 
 export default function SnippetTable({ showCreate }: SnippetTableProps) {
-  const { user, isLoading: userLoading } = useUser();
+  const { user } = useUser();
   const [filterMine, setFilterMine] = useState(false);
   const [selected, setSelected] = useState<any | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: snippets = [], error } = useQuery({
+  const { data: snippets = [] } = useQuery({
     queryKey: ['snippets', filterMine],
     queryFn: () => getSnippets(filterMine),
   });
@@ -49,66 +50,106 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
     onError: (err) => toast.error(err.message),
   });
 
-  const filteredSnippets = snippets;
-
   return (
     <div className='space-y-4'>
-      {/* Header Section */}
-      <div className='flex items-center justify-between'>
-        <h1 className='text-2xl font-bold'>QuickRef</h1>
+      <div className='space-y-4'>
+        {/* Header Section */}
+        <div className='flex flex-wrap items-center justify-between gap-2'>
+          {/* Right side (buttons aligned right) */}
+          <div className='ml-auto flex gap-2'>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button className='bg-secondary text-secondary-foreground hover:bg-secondary/90'>
+                  {filterMine ? 'Viewing: Mine' : 'Viewing: All'}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className='border border-border bg-background shadow-md'>
+                <DropdownMenuItem onClick={() => setFilterMine(false)}>
+                  View All
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => setFilterMine(true)}>
+                  View Mine
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-        <div className='flex gap-2'>
-          {/* View Toggle */}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant='outline'>
-                {filterMine ? 'Viewing: Mine' : 'Viewing: All'}
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => setFilterMine(false)}>
-                View All
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => setFilterMine(true)}>
-                View Mine
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-
-          {/* Add New Snippet - visible to all logged-in users */}
-          {user && <SnippetSheet />}
+            {user && <SnippetSheet />}
+          </div>
         </div>
       </div>
 
       {/* Table Section */}
-      <Card>
-        <Table>
+      <Card className='overflow-x-auto'>
+        <Table className='min-w-[850px] text-base'>
           <TableHeader>
-            <TableRow>
-              <TableHead>Row ID</TableHead>
-              <TableHead>Username</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Language</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Actions</TableHead>
+            <TableRow className='hover:bg-transparent'>
+              <TableHead className='text-[0.95rem]'>#</TableHead>
+              <TableHead className='text-[0.95rem]'>Username</TableHead>
+              <TableHead className='text-[0.95rem]'>Role</TableHead>
+              <TableHead className='text-[0.95rem]'>Visibility</TableHead>
+              <TableHead className='text-[0.95rem]'>Language</TableHead>
+              <TableHead className='text-[0.95rem]'>Description</TableHead>
+              <TableHead className='text-[0.95rem]'>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredSnippets.map((snippet, index) => {
+            {snippets.map((snippet, index) => {
               const isOwner = user?.id === snippet.user_id;
               const role = isOwner ? 'Owner' : 'Viewer';
 
               return (
-                <TableRow key={snippet.id}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{snippet.username || 'Unknown'}</TableCell>
-                  <TableCell>{role}</TableCell>
-                  <TableCell>{snippet.language}</TableCell>
-                  <TableCell className='max-w-[200px] truncate'>
+                <TableRow key={snippet.id} className='hover:bg-secondary/20'>
+                  <TableCell className='font-medium'>{index + 1}</TableCell>
+                  <TableCell className='font-medium'>
+                    {snippet.username || 'Unknown'}
+                  </TableCell>
+
+                  {/* Role Badge */}
+                  <TableCell>
+                    <span
+                      className={cn(
+                        'rounded-full px-3 py-1 text-sm font-medium',
+                        isOwner
+                          ? 'bg-[hsla(var(--label-owner-bg))] text-[hsla(var(--label-owner-text))]'
+                          : 'bg-[hsla(var(--label-viewer-bg))] text-[hsla(var(--label-viewer-text))]',
+                      )}
+                    >
+                      {role}
+                    </span>
+                  </TableCell>
+
+                  {/* Visibility Badge */}
+                  <TableCell>
+                    <span
+                      className={cn(
+                        'rounded-full px-3 py-1 text-sm font-medium capitalize',
+                        snippet.visibility === 'private'
+                          ? 'bg-[hsla(var(--visibility-private-bg))] text-[hsla(var(--visibility-private-text))]'
+                          : 'bg-[hsla(var(--visibility-public-bg))] text-[hsla(var(--visibility-public-text))]',
+                      )}
+                    >
+                      {snippet.visibility}
+                    </span>
+                  </TableCell>
+
+                  {/* Language Badge */}
+                  <TableCell>
+                    <span className='rounded-lg bg-[hsla(var(--primary)/0.1)] px-3 py-1.5 text-sm font-medium text-[hsla(var(--primary))] dark:bg-[hsla(var(--primary)/0.2)]'>
+                      {snippet.language}
+                    </span>
+                  </TableCell>
+
+                  <TableCell className='max-w-[200px] truncate text-[0.95rem]'>
                     {snippet.description}
                   </TableCell>
-                  <TableCell className='flex gap-2'>
-                    <Button size='sm' onClick={() => setSelected(snippet)}>
+
+                  <TableCell className='flex items-center gap-2'>
+                    <Button
+                      size='sm'
+                      variant='default'
+                      className='h-8 px-3 text-sm'
+                      onClick={() => setSelected(snippet)}
+                    >
                       View
                     </Button>
 
@@ -116,9 +157,10 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
                       <Button
                         size='sm'
                         variant='destructive'
+                        className='h-8 px-3 text-sm'
                         onClick={() => deleteMutation.mutate(snippet.id)}
                       >
-                        <Trash className='h-4 w-4' />
+                        <Trash className='h-2 w-2' />
                       </Button>
                     )}
                   </TableCell>
@@ -129,7 +171,7 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
         </Table>
       </Card>
 
-      {/* Modal Logic */}
+      {/* Modal */}
       {selected && (
         <SnippetModal
           snippet={selected}
