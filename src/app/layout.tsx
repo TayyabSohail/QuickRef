@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Toaster } from 'sonner';
+import { GridSmallBackground } from '@/components/ui/GridSmallBackgroundDemo';
 
 import './globals.css';
 
@@ -36,7 +37,7 @@ export default function RootLayout({
         <AppProviders>
           <PosthogAnalytics />
           <Toaster richColors />
-          {children}
+          <GridSmallBackground>{children}</GridSmallBackground>
         </AppProviders>
       </body>
     </html>
