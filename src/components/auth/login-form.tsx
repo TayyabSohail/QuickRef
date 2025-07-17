@@ -57,14 +57,19 @@ export function LoginForm({
   };
 
   return (
-    <div className={cn('relative min-h-screen w-full', className)} {...props}>
-      <div className='container flex min-h-screen items-center justify-center p-4'>
-        <Card className='w-full max-w-md border bg-card/80 shadow-xl backdrop-blur-md'>
+    <div
+      className={cn(
+        'flex min-h-screen w-full items-center justify-center p-4',
+        className,
+      )}
+      {...props}
+    >
+      <Card className='grid w-full max-w-4xl grid-cols-1 overflow-hidden rounded-2xl shadow-2xl md:grid-cols-2'>
+        {/* Left: Login Form */}
+        <div className='flex flex-col justify-center p-8'>
           <CardHeader className='text-center'>
-            <CardTitle className='text-2xl font-bold text-card-foreground'>
-              Welcome Back
-            </CardTitle>
-            <CardDescription className='mt-2 text-muted-foreground'>
+            <CardTitle className='text-3xl font-bold'>Welcome Back</CardTitle>
+            <CardDescription className='mt-1'>
               Sign in to your account
             </CardDescription>
           </CardHeader>
@@ -75,7 +80,6 @@ export function LoginForm({
                 onSubmit={form.handleSubmit(onSubmit)}
                 className='space-y-5'
               >
-                {/* Email Field */}
                 <FormField
                   control={form.control}
                   name='email'
@@ -84,7 +88,7 @@ export function LoginForm({
                       <FormLabel>Email</FormLabel>
                       <FormControl>
                         <Input
-                          placeholder='your@email.com'
+                          placeholder='you@example.com'
                           type='email'
                           {...field}
                         />
@@ -93,8 +97,6 @@ export function LoginForm({
                     </FormItem>
                   )}
                 />
-
-                {/* Password Field */}
                 <FormField
                   control={form.control}
                   name='password'
@@ -104,7 +106,7 @@ export function LoginForm({
                         <FormLabel>Password</FormLabel>
                         <a
                           href='#'
-                          className='text-sm font-medium text-muted-foreground transition-colors hover:text-primary'
+                          className='text-sm font-medium text-muted-foreground hover:text-primary'
                         >
                           Forgot password?
                         </a>
@@ -120,23 +122,15 @@ export function LoginForm({
                     </FormItem>
                   )}
                 />
-
-                {/* Submit Button */}
-                <Button
-                  type='submit'
-                  className='w-full'
-                  disabled={isPending || form.formState.isSubmitting}
-                >
+                <Button type='submit' className='w-full' disabled={isPending}>
                   {isPending ? 'Signing in...' : 'Sign In'}
                 </Button>
-
-                {/* Sign Up Link */}
                 <p className='text-center text-sm text-muted-foreground'>
-                  Don&apos;t have an account?{' '}
+                  Don't have an account?{' '}
                   <button
                     type='button'
                     onClick={() => router.push('/auth/signup')}
-                    className='font-medium text-primary underline-offset-2 hover:underline'
+                    className='font-medium text-primary hover:underline'
                   >
                     Sign up
                   </button>
@@ -144,8 +138,18 @@ export function LoginForm({
               </form>
             </Form>
           </CardContent>
-        </Card>
-      </div>
+        </div>
+
+        {/* Right: Product Info - Using primary color */}
+        <div className='flex flex-col justify-center bg-primary p-8 text-center text-primary-foreground'>
+          <h2 className='mb-2 text-3xl font-semibold'>QuickRef</h2>
+          <p className='text-sm text-primary-foreground/90'>
+            Your personal snippet manager
+            <br />
+            save, search, and organize code effortlessly.
+          </p>
+        </div>
+      </Card>
     </div>
   );
 }
