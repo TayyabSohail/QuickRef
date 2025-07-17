@@ -1,10 +1,10 @@
 import { Metadata } from 'next';
 
 export const appConfig = {
-  title: 'Next.js App',
+  title: 'QuickRef',
   description:
-    'A modern Next.js application with Supabase, React Query, and TypeScript',
-  keywords: 'next.js, supabase, react-query, typescript, boilerplate',
+    'QuickRef is a lightning-fast snippet manager built for developers. Effortlessly store, organize, and retrieve your code anytime.',
+  keywords: 'next.js, supabase, react-query, typescript, code',
   logo: '/logo/main.png',
   defaultLocale: 'en-US',
   defaultCurrency: 'USD',
