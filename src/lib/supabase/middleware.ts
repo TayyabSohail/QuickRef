@@ -31,14 +31,38 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
+  const pathname = url.pathname;
+
+  if (pathname === '/auth/logout') {
+    await supabase.auth.signOut();
+
+    supabaseResponse.cookies.set('sb-access-token', '', {
+      maxAge: 0,
+      path: '/',
+    });
+    supabaseResponse.cookies.set('sb-refresh-token', '', {
+      maxAge: 0,
+      path: '/',
+    });
+
+    return NextResponse.redirect(new URL('/auth/login', request.url));
+  }
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const isProtectedPath = url.pathname.startsWith('/dashboard');
+  const isProtectedPath = pathname.startsWith('/dashboard');
+  const isAuthPath = pathname.startsWith('/auth');
+  const isPublicOnlyPath = pathname === '/' || pathname === '/landing';
 
   if (isProtectedPath && !user) {
     url.pathname = '/auth/login';
+    return NextResponse.redirect(url);
+  }
+
+  if ((isAuthPath || isPublicOnlyPath) && user) {
+    url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
 

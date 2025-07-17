@@ -3,14 +3,16 @@
 import { Button } from '@/components/ui/button';
 import { ModeToggle } from './modeToggle';
 import { useRouter } from 'next/navigation';
-import { useUser } from '@supabase/auth-helpers-react';
 
 const DashboardNavbar = () => {
-  const user = useUser();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await fetch('/auth/logout');
+    await fetch('/auth/logout', {
+      method: 'GET',
+      credentials: 'include',
+    });
+
     router.push('/auth/login');
   };
 
