@@ -1,14 +1,9 @@
-import DashboardNavbar from '@/components/navbar/DashboardNavbar';
+import SnippetTable from '@/components/snippets/SnippetTable';
 
-export default function DashboardLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function DashboardPage() {
   return (
-    <div className='min-h-screen bg-muted px-4 pt-24'>
-      <DashboardNavbar />
-      {children}
+    <div className='p-6'>
+      <SnippetTable />
     </div>
   );
 }

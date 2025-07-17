@@ -21,7 +21,7 @@ export async function createSnippet(data: z.infer<typeof snippetSchema>) {
   return { success: true };
 }
 
-export async function getSnippets(filterMine = false) {
+export async function getSnippets(filterMine = false, searchQuery = '') {
   const supabase = await createSupabaseServerClient();
   const user = await supabase.auth.getUser();
 
@@ -32,6 +32,10 @@ export async function getSnippets(filterMine = false) {
 
   if (filterMine && user.data.user) {
     query = query.eq('user_id', user.data.user.id);
+  }
+
+  if (searchQuery.trim()) {
+    query = query.ilike('content', `%${searchQuery}%`);
   }
 
   const { data, error } = await query;

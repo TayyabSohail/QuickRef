@@ -1,3 +1,4 @@
+// app/dashboard/page.tsx
 import SnippetTable from '@/components/snippets/SnippetTable';
 
 export default function DashboardPage() {
