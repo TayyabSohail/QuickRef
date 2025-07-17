@@ -15,7 +15,7 @@ import {
   TableCell,
 } from '@/components/ui/table';
 import SnippetModal from './SnippetModal';
-import { Trash } from 'lucide-react';
+import { Trash, Eye, Filter, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import {
   DropdownMenu,
@@ -26,19 +26,16 @@ import {
 import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
 import { DashboardNavbar } from '@/components/navbar/DashboardNavbar';
+import { Skeleton } from '@/components/ui/skeleton';
 
-type SnippetTableProps = {
-  showCreate?: boolean;
-};
-
-export default function SnippetTable({ showCreate }: SnippetTableProps) {
+export default function SnippetTable() {
   const { user } = useUser();
   const [filterMine, setFilterMine] = useState(false);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<any | null>(null);
   const queryClient = useQueryClient();
 
-  const { data: snippets = [] } = useQuery({
+  const { data: snippets = [], isLoading } = useQuery({
     queryKey: ['snippets', filterMine, search],
     queryFn: () => getSnippets(filterMine, search),
   });
@@ -53,22 +50,28 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
   });
 
   return (
-    <>
-      {/* ✅ Navbar with Search */}
+    <div className='space-y-4'>
       <DashboardNavbar search={search} setSearch={setSearch} />
 
-      <div className='space-y-4 pt-10'>
-        {/* Header Section */}
-        <div className='flex flex-wrap items-center justify-between gap-2'>
-          <div className='ml-auto flex gap-2'>
-            {/* Dropdown to toggle mine/all */}
+      <div className='mx-auto px-8 sm:px-10 lg:max-w-screen-xl'>
+        <div className='flex flex-col justify-between gap-4 sm:flex-row sm:items-center'>
+          <div>
+            <h2 className='text-xl font-semibold'>Code Snippets</h2>
+            <p className='text-sm text-muted-foreground'>
+              {filterMine ? 'Your snippets' : 'Community snippets'}
+            </p>
+          </div>
+
+          <div className='flex gap-2'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button className='bg-secondary text-secondary-foreground hover:bg-secondary/90'>
-                  {filterMine ? 'Viewing: Mine' : 'Viewing: All'}
+                <Button variant='outline' size='sm' className='gap-1'>
+                  <Filter className='h-3.5 w-3.5' />
+                  <span>{filterMine ? 'Mine' : 'All'}</span>
+                  <ChevronDown className='h-3.5 w-3.5 opacity-50' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent className='border border-border bg-background shadow-md'>
+              <DropdownMenuContent align='end'>
                 <DropdownMenuItem onClick={() => setFilterMine(false)}>
                   View All
                 </DropdownMenuItem>
@@ -82,105 +85,133 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
           </div>
         </div>
 
-        {/* Table Section */}
-        <Card className='overflow-x-auto'>
-          <Table className='min-w-[850px] text-base'>
-            <TableHeader>
-              <TableRow className='hover:bg-transparent'>
-                <TableHead className='text-[0.95rem]'>#</TableHead>
-                <TableHead className='text-[0.95rem]'>Username</TableHead>
-                <TableHead className='text-[0.95rem]'>Role</TableHead>
-                <TableHead className='text-[0.95rem]'>Visibility</TableHead>
-                <TableHead className='text-[0.95rem]'>Language</TableHead>
-                <TableHead className='text-[0.95rem]'>Description</TableHead>
-                <TableHead className='text-[0.95rem]'>Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {snippets.map((snippet, index) => {
-                const isOwner = user?.id === snippet.user_id;
-                const role = isOwner ? 'Owner' : 'Viewer';
-
-                return (
-                  <TableRow key={snippet.id} className='hover:bg-secondary/20'>
-                    <TableCell className='font-medium'>{index + 1}</TableCell>
-                    <TableCell className='font-medium'>
-                      {snippet.username || 'Unknown'}
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={cn(
-                          'rounded-full px-3 py-1 text-sm font-medium',
-                          isOwner
-                            ? 'bg-[hsla(var(--label-owner-bg))] text-[hsla(var(--label-owner-text))]'
-                            : 'bg-[hsla(var(--label-viewer-bg))] text-[hsla(var(--label-viewer-text))]',
-                        )}
-                      >
-                        {role}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span
-                        className={cn(
-                          'rounded-full px-3 py-1 text-sm font-medium capitalize',
-                          snippet.visibility === 'private'
-                            ? 'bg-[hsla(var(--visibility-private-bg))] text-[hsla(var(--visibility-private-text))]'
-                            : 'bg-[hsla(var(--visibility-public-bg))] text-[hsla(var(--visibility-public-text))]',
-                        )}
-                      >
-                        {snippet.visibility}
-                      </span>
-                    </TableCell>
-                    <TableCell>
-                      <span className='rounded-lg bg-[hsla(var(--primary)/0.1)] px-3 py-1.5 text-sm font-medium text-[hsla(var(--primary))] dark:bg-[hsla(var(--primary)/0.2)]'>
-                        {snippet.language}
-                      </span>
-                    </TableCell>
-                    <TableCell className='max-w-[200px] truncate text-[0.95rem]'>
-                      {snippet.description}
-                    </TableCell>
-                    <TableCell className='flex items-center gap-2'>
-                      <Button
-                        size='sm'
-                        variant='default'
-                        className='h-8 px-3 text-sm'
-                        onClick={() => setSelected(snippet)}
-                      >
-                        View
-                      </Button>
-                      {isOwner && (
-                        <Button
-                          size='sm'
-                          variant='destructive'
-                          className='h-8 px-3 text-sm'
-                          onClick={() => deleteMutation.mutate(snippet.id)}
+        <Card className='mt-4 border-none shadow-sm'>
+          <div className='overflow-x-auto'>
+            <Table className='min-w-[600px]'>
+              <TableHeader>
+                <TableRow className='hover:bg-transparent'>
+                  <TableHead className='w-10'>#</TableHead>
+                  <TableHead className='min-w-[120px]'>User</TableHead>
+                  <TableHead className='min-w-[100px]'>Visibility</TableHead>
+                  <TableHead className='min-w-[100px]'>Language</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead className='w-20 pr-4 text-right'>
+                    Actions
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {isLoading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <TableRow key={i}>
+                      <TableCell>
+                        <Skeleton className='h-4 w-4' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-20' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-16' />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton className='h-4 w-full' />
+                      </TableCell>
+                      <TableCell className='flex justify-end gap-1 pr-4'>
+                        <Skeleton className='h-7 w-7 rounded-full' />
+                        <Skeleton className='h-7 w-7 rounded-full' />
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : snippets.length > 0 ? (
+                  snippets.map((snippet, index) => (
+                    <TableRow key={snippet.id} className='group'>
+                      <TableCell className='font-medium'>{index + 1}</TableCell>
+                      <TableCell className='truncate font-medium'>
+                        {snippet.username || 'Unknown'}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={cn(
+                            'inline-flex h-6 items-center rounded-full px-2.5 text-xs font-medium capitalize',
+                            snippet.visibility === 'private'
+                              ? 'bg-[hsla(var(--visibility-private-bg))] text-[hsla(var(--visibility-private-text))]'
+                              : 'bg-[hsla(var(--visibility-public-bg))] text-[hsla(var(--visibility-public-text))]',
+                          )}
                         >
-                          <Trash className='h-2 w-2' />
-                        </Button>
-                      )}
+                          {snippet.visibility}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={cn(
+                            'inline-flex h-6 items-center rounded-md px-2.5 text-xs font-medium',
+                            'bg-[hsla(var(--primary)/0.1)] text-[hsla(var(--primary))] dark:bg-[hsla(var(--primary)/0.2)]',
+                          )}
+                        >
+                          {snippet.language}
+                        </span>
+                      </TableCell>
+                      <TableCell className='max-w-[200px] truncate'>
+                        {snippet.description}
+                      </TableCell>
+                      <TableCell className='pr-4'>
+                        <div className='flex justify-end gap-1'>
+                          {/* Eye Button (always visible) */}
+                          <Button
+                            variant='ghost'
+                            size='icon'
+                            className='h-7 w-7 rounded-full p-0 text-muted-foreground hover:bg-[hsla(var(--action-hover-bg))] hover:text-[hsla(var(--action-hover-text))]'
+                            onClick={() => setSelected(snippet)}
+                          >
+                            <Eye className='h-3.5 w-3.5' />
+                          </Button>
+
+                          {/* Trash Button (render invisible if not owner) */}
+                          {user?.id === snippet.user_id ? (
+                            <Button
+                              variant='ghost'
+                              size='icon'
+                              className='h-7 w-7 rounded-full p-0 text-destructive hover:bg-destructive/10'
+                              onClick={() => deleteMutation.mutate(snippet.id)}
+                            >
+                              <Trash className='h-3.5 w-3.5' />
+                            </Button>
+                          ) : (
+                            <div className='h-7 w-7' /> // Invisible placeholder to keep alignment
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className='h-24 text-center'>
+                      No snippets found
                     </TableCell>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
+                )}
+              </TableBody>
+            </Table>
+          </div>
         </Card>
-
-        {/* Modal */}
-        {selected && (
-          <SnippetModal
-            snippet={selected}
-            onClose={() => setSelected(null)}
-            mode={
-              user?.id === selected?.user_id
-                ? selected.id
-                  ? 'edit'
-                  : 'add'
-                : 'view'
-            }
-          />
-        )}
       </div>
-    </>
+
+      {selected && (
+        <SnippetModal
+          snippet={selected}
+          onClose={() => setSelected(null)}
+          mode={
+            user?.id === selected?.user_id
+              ? selected.id
+                ? 'edit'
+                : 'add'
+              : 'view'
+          }
+        />
+      )}
+    </div>
   );
 }

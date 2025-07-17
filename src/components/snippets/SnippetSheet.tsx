@@ -77,7 +77,7 @@ export default function SnippetSheet() {
         <Button variant='default'>New Snippet</Button>
       </SheetTrigger>
 
-      <SheetContent className='flex w-full flex-col sm:max-w-3xl'>
+      <SheetContent className='flex w-full flex-col bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] sm:max-w-3xl'>
         <SheetHeader>
           <SheetTitle>Create a New Snippet</SheetTitle>
           <SheetDescription>Write and save your code</SheetDescription>
@@ -86,7 +86,7 @@ export default function SnippetSheet() {
         <div className='flex-1 overflow-y-auto'>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='flex flex-col gap-4 py-4'
+            className='flex flex-col gap-4 bg-[hsl(var(--card))] py-4 text-[hsl(var(--card-foreground))]'
           >
             {/* Language */}
             <div className='grid gap-2'>

@@ -59,7 +59,7 @@ export default function SnippetModal({ snippet, mode, onClose }: Props) {
 
   return (
     <Dialog open onOpenChange={onClose}>
-      <DialogContent className='max-w-4xl'>
+      <DialogContent className='max-w-4xl rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--card-foreground))] shadow-xl'>
         <DialogHeader>
           <DialogTitle>
             {finalMode === 'add'

@@ -61,7 +61,7 @@ export default function SnippetFormEditor({
   return (
     <form
       onSubmit={form.handleSubmit(onSubmit)}
-      className='flex flex-col gap-4 py-4'
+      className='flex flex-col gap-4 rounded-xl bg-[hsl(var(--card))] p-6 py-4 text-[hsl(var(--card-foreground))] shadow-md'
     >
       <div className='flex flex-col gap-4 md:flex-row'>
         {/* Language dropdown */}
@@ -69,7 +69,7 @@ export default function SnippetFormEditor({
           <Label htmlFor='language'>Language</Label>
           <select
             id='language'
-            className='rounded-md border px-3 py-2'
+            className='rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--input))] px-3 py-2 text-[hsl(var(--foreground))]'
             disabled={isReadOnly}
             value={selectedLang}
             onChange={(e) => form.setValue('language', e.target.value)}
@@ -87,7 +87,7 @@ export default function SnippetFormEditor({
           <Label htmlFor='visibility'>Visibility</Label>
           <select
             id='visibility'
-            className='rounded-md border px-3 py-2'
+            className='rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--input))] px-3 py-2 text-[hsl(var(--foreground))]'
             disabled={isReadOnly}
             value={form.watch('visibility')}
             onChange={(e) =>
@@ -106,24 +106,24 @@ export default function SnippetFormEditor({
       {/* Monaco Code Editor */}
       <div className='grid gap-2'>
         <Label htmlFor='content'>Code</Label>
-        <Editor
-          key={selectedLang} // refreshes syntax highlighting on lang change
-          height='400px'
-          language={selectedLang}
-          value={form.watch('content')}
-          theme='vs-dark'
-          onChange={(value) => form.setValue('content', value || '')}
-          options={{
-            fontSize: 14,
-            lineNumbers: 'on',
-            minimap: { enabled: false },
-            readOnly: isReadOnly,
-            automaticLayout: true,
-            padding: {
-              top: 20,
-            },
-          }}
-        />
+        <div className='overflow-hidden rounded-md border border-[hsl(var(--border))]'>
+          <Editor
+            key={selectedLang}
+            height='400px'
+            language={selectedLang}
+            value={form.watch('content')}
+            theme={isReadOnly ? 'vs-dark' : 'vs-dark'} // Set theme dynamically if needed
+            onChange={(value) => form.setValue('content', value || '')}
+            options={{
+              fontSize: 14,
+              lineNumbers: 'on',
+              minimap: { enabled: false },
+              readOnly: isReadOnly,
+              automaticLayout: true,
+              padding: { top: 20 },
+            }}
+          />
+        </div>
       </div>
 
       {/* Description */}
@@ -132,6 +132,7 @@ export default function SnippetFormEditor({
         <Input
           id='description'
           placeholder='Describe what this snippet does...'
+          className='border border-[hsl(var(--border))] bg-[hsl(var(--input))] text-[hsl(var(--foreground))]'
           {...form.register('description')}
           readOnly={isReadOnly}
         />
