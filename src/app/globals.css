@@ -65,35 +65,37 @@ body {
 
   --code-purple: 260 100% 75%;
   --code-white: 0 0% 100%;
+  --red: text-red-500;
 }
 
 .dark {
-  --background: 222 47% 10%;
+  --background: 0 0% 0%; /* Black */
   --foreground: 0 0% 98%;
-  --card: 222 47% 12%;
+
+  --card: 0 0% 5%; /* Dark gray card */
   --card-foreground: 0 0% 98%;
 
-  --primary: 222 89% 60%;
-  --primary-foreground: 0 0% 100%;
+  --primary: 160 75% 40%; /* Green */
+  --primary-foreground: 160 100% 95%;
 
-  --secondary: 222 10% 20%;
-  --secondary-foreground: 0 0% 100%;
+  --secondary: 160 20% 20%; /* Muted green, instead of blue */
+  --secondary-foreground: 160 40% 85%;
 
-  --muted: 222 10% 30%;
-  --muted-foreground: 0 0% 70%;
+  --muted: 160 15% 25%;
+  --muted-foreground: 160 20% 75%;
 
   --destructive: 0 85% 60%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 222 10% 30%;
-  --input: 222 10% 25%;
-  --ring: 222 89% 60%;
+  --border: 160 10% 30%;
+  --input: 160 10% 25%;
+  --ring: 160 75% 40%; /* Match primary for focus rings */
 
-  --label-owner-bg: 222 89% 30%;
-  --label-owner-text: 222 89% 90%;
-
-  --label-viewer-bg: 210 10% 30%;
-  --label-viewer-text: 210 10% 75%;
+  /* Custom labels & role badges */
+  --label-owner-bg: 160 60% 25%;
+  --label-owner-text: 160 60% 80%;
+  --label-viewer-bg: 160 10% 30%;
+  --label-viewer-text: 160 20% 75%;
 
   --visibility-public-bg: 146 40% 25%;
   --visibility-public-text: 146 60% 80%;
@@ -101,25 +103,24 @@ body {
   --visibility-private-bg: 0 55% 30%;
   --visibility-private-text: 0 75% 85%;
 
-    --terminal-container-bg: 240 10% 5%;
-  --terminal-container-border: 240 6% 20%;
-  --terminal-gradient-start: 0 0% 0%;
-  --terminal-gradient-end: 240 6% 10%;
+  --terminal-container-bg: 160 10% 5%;
+  --terminal-container-border: 160 6% 20%;
+  --terminal-gradient-start: 160 5% 0%;
+  --terminal-gradient-end: 160 6% 10%;
   --terminal-shadow: 0 0% 100% / 0.15;
 
-  --code-purple: 260 100% 75%;
+  --code-purple: 300 100% 75%;
   --code-white: 0 0% 100%;
-  /* Dark mode semantic colors */
+
   --role-owner-bg: 160 84% 20%;
   --role-owner-text: 160 84% 80%;
-  --role-viewer-bg: 210 100% 20%;
-  --role-viewer-text: 210 100% 80%;
+  --role-viewer-bg: 120 100% 20%;
+  --role-viewer-text: 120 100% 80%;
 
-  /* Terminal Dot Colors */
   --terminal-yellow: 45 100% 50%;
   --terminal-green: 135 60% 45%;
-  --grid-line: rgba(255, 255, 255, 0.06); /* for dark mode */
-
+  --grid-line: rgba(255, 255, 255, 0.06);
+  --red: text-red-500;
 }
 
 

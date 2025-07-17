@@ -44,14 +44,8 @@ export function SignupForm({
 
   const onSubmit = async (values: FormSchema) => {
     setErrorMessage('');
-
     const result = await register(values);
-
-    if (result?.error) {
-      setErrorMessage(result.error);
-    } else {
-      router.replace('/auth/verify-email');
-    }
+    router.replace('/auth/verify-email');
   };
   return (
     <div
@@ -153,9 +147,7 @@ export function SignupForm({
 
                 {/* Server error */}
                 {serverError && (
-                  <p className='text-center text-sm text-red-500'>
-                    {serverError}
-                  </p>
+                  <p className='text-red text-center text-sm'>{serverError}</p>
                 )}
 
                 <Button

@@ -12,8 +12,7 @@ type WhitelistUser = Pick<z.infer<typeof registerSchema>, 'email' | 'name'> & {
 export async function register(values: z.infer<typeof registerSchema>) {
   const supabase = await createSupabaseServerClient();
 
-  // sign up in Supabase Auth
-  const { error: authError } = await supabase.auth.signUp({
+  const { data, error: authError } = await supabase.auth.signUp({
     email: values.email,
     password: values.password,
     options: {
@@ -21,11 +20,14 @@ export async function register(values: z.infer<typeof registerSchema>) {
     },
   });
 
-  if (authError) {
-    return { error: authError.message };
+  if (authError || !data.user) {
+    return { error: authError?.message || 'Signup failed' };
   }
 
-  const userToInsert: WhitelistUser = {
+  const user = data.user;
+
+  const userToInsert: WhitelistUser & { id: string } = {
+    id: user.id,
     email: values.email,
     name: values.name,
     approved: true,
@@ -36,6 +38,7 @@ export async function register(values: z.infer<typeof registerSchema>) {
     .insert([userToInsert]);
 
   if (dbError) {
+    console.error('DB Insert Error:', dbError);
     return { error: 'User created but failed to add to whitelist.' };
   }
 
