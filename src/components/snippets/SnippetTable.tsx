@@ -65,13 +65,21 @@ export default function SnippetTable() {
           <div className='flex gap-2'>
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant='outline' size='sm' className='gap-1'>
+                <Button
+                  variant='outline'
+                  size='sm'
+                  className='gap-1 border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]'
+                >
                   <Filter className='h-3.5 w-3.5' />
                   <span>{filterMine ? 'Mine' : 'All'}</span>
                   <ChevronDown className='h-3.5 w-3.5 opacity-50' />
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align='end'>
+
+              <DropdownMenuContent
+                align='end'
+                className='border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-md'
+              >
                 <DropdownMenuItem onClick={() => setFilterMine(false)}>
                   View All
                 </DropdownMenuItem>
