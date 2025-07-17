@@ -8,19 +8,19 @@ body {
 
 @layer base {
 :root {
-  --background: 0 0% 100%;
+  --background: #f0f0f0;
   --foreground: 0 0% 10%;
   --card: 0 0% 100%;
   --card-foreground: 0 0% 10%;
 
-  --primary: 222 47% 32%;         /* Darker muted blue */
+  --primary: 222 47% 32%;
   --primary-foreground: 0 0% 100%;
 
   --secondary: 210 16% 93%;
   --secondary-foreground: 222 47% 11%;
 
-  --muted: 210 16% 85%;
-  --muted-foreground: 215 15% 35%;
+--primary: 160 75% 40%; /* Deep emerald */
+--primary-foreground: 160 100% 95%;
 
   --destructive: 0 75% 50%;
   --destructive-foreground: 0 0% 100%;
@@ -42,11 +42,29 @@ body {
   --visibility-private-bg: 0 85% 95%;
   --visibility-private-text: 0 75% 35%;
 
-  /* New semantic colors */
+  /* Role Badge Colors */
   --role-owner-bg: 160 84% 95%;
   --role-owner-text: 160 84% 30%;
   --role-viewer-bg: 210 100% 95%;
   --role-viewer-text: 210 100% 30%;
+
+  /* Terminal Dot Colors */
+  --terminal-yellow: 45 100% 50%;
+  --terminal-green: 135 60% 45%;
+
+  --grid-line: rgba(0, 0, 0, 0.06); 
+  --bg-login-left: var(--card); 
+  --bg-login-right: var(--secondary);
+  --text-login-right: var(--secondary-foreground); 
+
+    --terminal-container-bg: 240 10% 5%;
+  --terminal-container-border: 240 6% 20%;
+  --terminal-gradient-start: 0 0% 0%;
+  --terminal-gradient-end: 240 6% 10%;
+  --terminal-shadow: 0 0% 0% / 0.25;
+
+  --code-purple: 260 100% 75%;
+  --code-white: 0 0% 100%;
 }
 
 .dark {
@@ -83,12 +101,27 @@ body {
   --visibility-private-bg: 0 55% 30%;
   --visibility-private-text: 0 75% 85%;
 
+    --terminal-container-bg: 240 10% 5%;
+  --terminal-container-border: 240 6% 20%;
+  --terminal-gradient-start: 0 0% 0%;
+  --terminal-gradient-end: 240 6% 10%;
+  --terminal-shadow: 0 0% 100% / 0.15;
+
+  --code-purple: 260 100% 75%;
+  --code-white: 0 0% 100%;
   /* Dark mode semantic colors */
   --role-owner-bg: 160 84% 20%;
   --role-owner-text: 160 84% 80%;
   --role-viewer-bg: 210 100% 20%;
   --role-viewer-text: 210 100% 80%;
+
+  /* Terminal Dot Colors */
+  --terminal-yellow: 45 100% 50%;
+  --terminal-green: 135 60% 45%;
+  --grid-line: rgba(255, 255, 255, 0.06); /* for dark mode */
+
 }
+
 
 }
 
@@ -98,5 +131,26 @@ body {
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .login-page {
+    background: linear-gradient(to bottom right, var(--background), var(--muted));
+  }
+
+  .login-container {
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+  }
+
+  .login-left {
+    background-color: var(--bg-login-left);
+  }
+
+  .login-right {
+    background-color: var(--bg-login-right);
+    color: var(--text-login-right);
   }
 }
