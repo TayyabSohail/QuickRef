@@ -5,9 +5,9 @@ export async function GET(req: NextRequest) {
   const token_hash = searchParams.get('token_hash');
   const type = searchParams.get('type');
 
-  if (!token_hash || !type) {
+  if (!token_hash || type !== 'signup') {
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/auth/login?error=missing_token_or_type`,
+      `${process.env.NEXT_PUBLIC_SITE_URL}/auth/login?error=invalid_or_missing_token`,
     );
   }
 
