@@ -5,18 +5,20 @@ export async function GET(req: NextRequest) {
   const supabase = await createSupabaseServerClient();
 
   const { searchParams } = new URL(req.url);
-  const token_hash = searchParams.get('token_hash');
+  const token = searchParams.get('token');
+  const email = searchParams.get('email'); // ✅ Required
   const type = searchParams.get('type') || 'signup';
 
-  if (!token_hash) {
+  if (!token || !email) {
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_SITE_URL}/auth/login?error=missing_token`,
+      `${process.env.NEXT_PUBLIC_SITE_URL}/auth/login?error=missing_token_or_email`,
     );
   }
 
   const { error } = await supabase.auth.verifyOtp({
-    token_hash,
-    type: type as 'signup',
+    type: 'signup',
+    token,
+    email,
   });
 
   if (error) {
