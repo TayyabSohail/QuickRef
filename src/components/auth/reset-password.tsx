@@ -8,6 +8,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { ControlledPasswordInput } from '../ui/form/controlled-password-input';
 import {
   Card,
   CardContent,
@@ -71,7 +72,6 @@ export function ResetPasswordForm() {
       router.push('/auth/login');
     });
   };
-
   return (
     <div className='flex min-h-screen w-full items-center justify-center p-4'>
       <Card className='w-full max-w-md rounded-2xl shadow-2xl'>
@@ -90,8 +90,7 @@ export function ResetPasswordForm() {
                   <FormItem>
                     <FormLabel>New Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type='password'
+                      <ControlledPasswordInput
                         placeholder='••••••••'
                         {...field}
                       />
@@ -107,8 +106,7 @@ export function ResetPasswordForm() {
                   <FormItem>
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl>
-                      <Input
-                        type='password'
+                      <ControlledPasswordInput
                         placeholder='••••••••'
                         {...field}
                       />

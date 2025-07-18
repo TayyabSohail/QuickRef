@@ -2,6 +2,7 @@
 
 import { useTransition } from 'react';
 import { useRouter } from 'next/navigation';
+import { ControlledPasswordInput } from '../ui/form/controlled-password-input';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -99,30 +100,24 @@ export function LoginForm({
                     </FormItem>
                   )}
                 />
-                <FormField
-                  control={form.control}
-                  name='password'
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className='flex items-center justify-between'>
-                        <FormLabel>Password</FormLabel>
-                        <Link href='/auth/forgot-password' passHref>
-                          <span className='text-sm font-medium text-muted-foreground hover:text-primary'>
-                            Forgot password?
-                          </span>
-                        </Link>
-                      </div>
-                      <FormControl>
-                        <Input
-                          type='password'
-                          placeholder='••••••••'
-                          {...field}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                <div className='space-y-1'>
+                  <div className='flex items-center justify-between'>
+                    <label className='text-sm font-medium text-muted-foreground'>
+                      Password
+                    </label>
+                    <Link href='/auth/forgot-password' passHref>
+                      <span className='text-sm font-medium text-muted-foreground hover:text-primary'>
+                        Forgot password?
+                      </span>
+                    </Link>
+                  </div>
+                  <ControlledPasswordInput<LoginFormValues>
+                    name='password'
+                    placeholder='••••••••'
+                    hideInstructions
+                  />
+                </div>
+
                 <Button type='submit' className='w-full' disabled={isPending}>
                   {isPending ? 'Signing in...' : 'Sign In'}
                 </Button>
