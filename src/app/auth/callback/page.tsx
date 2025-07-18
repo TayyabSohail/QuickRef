@@ -1,10 +1,11 @@
+// /app/auth/callback/page.tsx
 'use client';
 
-import { useEffect } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase/client';
 
-export default function AuthCallbackPage() {
+function AuthCallbackHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -14,51 +15,46 @@ export default function AuthCallbackPage() {
       const error = searchParams.get('error');
 
       if (error) {
-        console.error('Supabase auth error:', error);
         router.replace(`/auth/login?error=${error}`);
         return;
       }
 
       if (code) {
-        try {
-          // Exchange the code for a session
-          const { error: exchangeError } =
-            await supabase.auth.exchangeCodeForSession(code);
+        const { error: exchangeError } =
+          await supabase.auth.exchangeCodeForSession(code);
+        if (exchangeError) {
+          router.replace(`/auth/login?error=invalid_code`);
+          return;
+        }
 
-          if (exchangeError) {
-            console.error('Session exchange failed:', exchangeError.message);
-            router.replace(`/auth/login?error=invalid_code`);
-            return;
-          }
+        // Parse hash for type
+        const hash = window.location.hash;
+        const type = new URLSearchParams(hash.replace('#', '')).get('type');
 
-          const hash = window.location.hash;
-          const params = new URLSearchParams(hash.replace('#', ''));
-          const type = params.get('type');
-
-          if (type === 'recovery') {
-            router.replace('/auth/reset-password');
-          } else if (type === 'signup') {
-            router.replace('/auth/login?success=confirmed');
-          } else {
-            router.replace('/dashboard'); // Or wherever you want to land after login
-          }
-        } catch (err) {
-          console.error('Auth callback error:', err);
-          router.replace('/auth/login?error=callback_error');
+        if (type === 'recovery') {
+          router.replace('/auth/reset-password');
+        } else if (type === 'signup') {
+          router.replace('/auth/login?success=confirmed');
+        } else {
+          router.replace('/dashboard');
         }
         return;
       }
 
-      // No code or hash, fallback to home
       router.replace('/');
     };
 
     handleAuthRedirect();
   }, [router, searchParams]);
 
+  return <p>Processing authentication...</p>;
+}
+
+// Wrap in Suspense
+export default function AuthCallbackPage() {
   return (
-    <div className='flex min-h-screen items-center justify-center'>
-      <p>Processing authentication...</p>
-    </div>
+    <Suspense fallback={<p>Loading...</p>}>
+      <AuthCallbackHandler />
+    </Suspense>
   );
 }
