@@ -1,3 +1,5 @@
+'use client';
+
 import { LoginForm } from '@/components/auth/login-form';
 import { GridSmallBackground } from '@/components/ui/GridSmallBackgroundDemo';
 import { Suspense } from 'react';
