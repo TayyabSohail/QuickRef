@@ -1,29 +1,14 @@
-import { redirect } from 'next/navigation';
-import { createSupabaseServerClient } from '@/lib/supabase/server';
-import LoginUI from './LoginUI';
+'use client';
 
-type Props = {
-  searchParams?: {
-    token_hash?: string;
-    type?: string;
-  };
-};
+import { LoginForm } from '@/components/auth/login-form';
+import { GridSmallBackground } from '@/components/ui/GridSmallBackgroundDemo';
 
-export default async function LoginPage({ searchParams }: Props) {
-  const supabase = await createSupabaseServerClient();
-
-  if (searchParams?.token_hash && searchParams?.type === 'signup') {
-    const { error } = await supabase.auth.verifyOtp({
-      type: 'signup',
-      token_hash: searchParams.token_hash,
-    });
-
-    if (error) {
-      return redirect(`/auth/login?error=${encodeURIComponent(error.message)}`);
-    }
-
-    return redirect(`/auth/login?success=confirmed`);
-  }
-
-  return <LoginUI />;
+export default function LoginPage() {
+  return (
+    <GridSmallBackground>
+      <div>
+        <LoginForm />
+      </div>
+    </GridSmallBackground>
+  );
 }

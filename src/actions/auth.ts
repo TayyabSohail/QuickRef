@@ -17,53 +17,88 @@ export async function register(values: z.infer<typeof registerSchema>) {
     },
   });
 
-  if (authError || !data.user) {
-    return { error: authError?.message || 'Signup failed' };
+  if (authError) {
+    return { error: authError.message };
   }
+  // if (authError || !data.user) {
+  //   return { error: authError?.message || 'Signup failed' };
+  // }
 
-  const user = data.user;
+  // const user = data.user;
 
-  const userToInsert: WhitelistUser & { id: string } = {
-    id: user.id,
-    email: values.email,
-    name: values.name,
-    approved: true,
-  };
+  // const userToInsert: WhitelistUser & { id: string } = {
+  //   id: user.id,
+  //   email: values.email,
+  //   name: values.name,
+  //   approved: true,
+  // };
 
-  const { error: dbError } = await supabase
-    .from('registered_users')
-    .insert([userToInsert]);
+  // const { error: dbError } = await supabase
+  //   .from('registered_users')
+  //   .insert([userToInsert]);
 
-  if (dbError) {
-    console.error('DB Insert Error:', dbError);
-    return { error: 'User created but failed to add to whitelist.' };
-  }
+  // if (dbError) {
+  //   console.error('DB Insert Error:', dbError);
+  //   return { error: 'User created but failed to add to whitelist.' };
+  // }
 
   return { success: true };
 }
 
-export async function login(formData: z.infer<typeof loginSchema>) {
+export async function login(values: z.infer<typeof loginSchema>) {
   const supabase = await createSupabaseServerClient();
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email: formData.email,
-    password: formData.password,
+  const { data, error: authError } = await supabase.auth.signInWithPassword({
+    email: values.email,
+    password: values.password,
   });
 
-  if (error) return { error: error.message };
-
-  const { data: match } = await supabase
-    .from('registered_users')
-    .select('id')
-    .eq('email', formData.email)
-    .maybeSingle();
-
-  if (!match) {
-    return { error: 'You are not authorized to log in' };
+  if (authError || !data.session?.user) {
+    return { error: authError?.message ?? 'Login failed' };
   }
 
-  redirect('/dashboard');
+  const user = data.session.user;
+
+  // 👇 Check if user already exists in registered_users
+  const { data: existing, error: fetchError } = await supabase
+    .from('registered_users')
+    .select('id')
+    .eq('id', user.id)
+    .single();
+
+  if (!existing && !fetchError) {
+    // 👇 Insert user into registered_users AFTER login
+    await supabase.from('registered_users').insert({
+      id: user.id,
+      email: user.email,
+      name: user.user_metadata.name ?? '', // adjust if needed
+    });
+  }
+
+  return { success: true };
 }
+// export async function login(formData: z.infer<typeof loginSchema>) {
+//   const supabase = await createSupabaseServerClient();
+
+//   const { error } = await supabase.auth.signInWithPassword({
+//     email: formData.email,
+//     password: formData.password,
+//   });
+
+//   if (error) return { error: error.message };
+
+//   const { data: match } = await supabase
+//     .from('registered_users')
+//     .select('id')
+//     .eq('email', formData.email)
+//     .maybeSingle();
+
+//   if (!match) {
+//     return { error: 'You are not authorized to log in' };
+//   }
+
+//   redirect('/dashboard');
+// }
 export async function resetPassword(email: string) {
   const supabase = await createSupabaseServerClient();
 
