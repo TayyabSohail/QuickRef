@@ -2,11 +2,14 @@ import { redirect } from 'next/navigation';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import LoginUI from './LoginUI';
 
-export default async function LoginPage({
-  searchParams,
-}: {
-  searchParams: { token_hash?: string; type?: string };
-}) {
+type Props = {
+  searchParams?: {
+    token_hash?: string;
+    type?: string;
+  };
+};
+
+export default async function LoginPage({ searchParams }: Props) {
   const supabase = await createSupabaseServerClient();
 
   if (searchParams?.token_hash && searchParams?.type === 'signup') {
