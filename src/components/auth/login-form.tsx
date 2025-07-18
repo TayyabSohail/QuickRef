@@ -3,6 +3,7 @@
 import { useTransition, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
@@ -127,13 +128,14 @@ export function LoginForm({
                 </Button>
                 <p className='text-center text-sm text-muted-foreground'>
                   Don't have an account?{' '}
-                  <button
-                    type='button'
-                    onClick={() => router.push('/auth/signup')}
-                    className='font-medium text-primary hover:underline'
-                  >
-                    Sign up
-                  </button>
+                  <Link href='/auth/signup' passHref>
+                    <button
+                      type='button'
+                      className='font-medium text-primary hover:underline'
+                    >
+                      Sign up
+                    </button>
+                  </Link>
                 </p>
               </form>
             </Form>

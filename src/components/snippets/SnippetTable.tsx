@@ -28,7 +28,10 @@ import { cn } from '@/lib/utils';
 import { DashboardNavbar } from '@/components/navbar/DashboardNavbar';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function SnippetTable() {
+interface SnippetTableProps {
+  showCreate?: boolean; 
+}
+export default function SnippetTable({ showCreate }: SnippetTableProps) {
   const { user } = useUser();
   const [filterMine, setFilterMine] = useState(false);
   const [search, setSearch] = useState('');

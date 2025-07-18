@@ -1,6 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export function Hero() {
@@ -36,8 +37,8 @@ export function Hero() {
 
       {/* CTA Buttons */}
       <div className='mt-10 flex flex-wrap justify-center gap-4'>
-        <Button size='lg' onClick={() => router.push('/auth/signup')}>
-          Get Started
+        <Button size='lg' asChild>
+          <Link href='/auth/signup'>Get Started</Link>
         </Button>
         <Button
           size='lg'

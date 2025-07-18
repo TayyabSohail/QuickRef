@@ -13,10 +13,11 @@ import { useUser } from '@/hooks/useUser';
 import { snippetSchema } from '@/schemas/snippet';
 import { z } from 'zod';
 import SnippetFormEditor from './SnippetFormEditor';
+import type { Snippet, SnippetModalMode } from '@/types/dao';
 
 type Props = {
-  snippet: any;
-  mode: 'view' | 'edit' | 'add';
+  snippet: Snippet;
+  mode: SnippetModalMode;
   onClose: () => void;
 };
 
