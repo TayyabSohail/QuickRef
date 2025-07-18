@@ -24,16 +24,14 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-import { createSupabaseBrowserClient } from '@/lib/supabase/client';
 import { resetPasswordSchema, ResetPasswordFormSchema } from '@/schemas/auth';
 
 export function ResetPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const code = searchParams.get('code');
-  const type = searchParams.get('type');
-  const supabase = createSupabaseBrowserClient();
+  const token_hash = searchParams.get('token_hash'); // Correctly extract token_hash
+  const type = searchParams.get('type'); // Correctly extract type
 
   const form = useForm<ResetPasswordFormSchema>({
     resolver: zodResolver(resetPasswordSchema),
@@ -44,32 +42,35 @@ export function ResetPasswordForm() {
   });
 
   const onSubmit = (values: ResetPasswordFormSchema) => {
-    if (!code || type !== 'recovery') {
+    // You don't need to extract `token_hash` and `type` again because you already did this earlier
+
+    if (!token_hash || type !== 'recovery') {
       toast.error('Invalid or expired recovery link.');
       return;
     }
 
     startTransition(async () => {
-      // 1. Exchange the recovery code for a session
-      const { data, error: exchangeError } =
-        await supabase.auth.exchangeCodeForSession(code);
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          token_hash,
+          type,
+          password: values.password,
+        }),
+      });
 
-      if (exchangeError) {
-        toast.error(exchangeError.message);
+      const result = await res.json();
+
+      if (!res.ok) {
+        toast.error(result.error || 'Something went wrong');
         return;
       }
 
-      // 2. Now we can update the password because session is active
-      const { error: updateError } = await supabase.auth.updateUser({
-        password: values.password,
-      });
-
-      if (updateError) {
-        toast.error(updateError.message);
-      } else {
-        toast.success('Password updated!');
-        router.push('/auth/login');
-      }
+      toast.success('Password updated!');
+      router.push('/auth/login');
     });
   };
 
