@@ -1,7 +1,7 @@
 'use client';
 
-import { useTransition, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useTransition, useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -35,6 +35,7 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<'div'>) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<LoginFormValues>({
@@ -45,6 +46,35 @@ export function LoginForm({
     },
   });
 
+  // ✅ Confirm email if token is present
+  useEffect(() => {
+    const token_hash = searchParams.get('token_hash');
+    const type = searchParams.get('type');
+
+    if (type === 'signup' && token_hash) {
+      const confirmEmail = async () => {
+        const res = await fetch('/api/auth/confirm-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token_hash }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+          toast.success('Email confirmed! You can now log in.');
+        } else {
+          toast.error(data.error || 'Confirmation failed.');
+        }
+
+        // Clean URL
+        router.replace('/auth/login');
+      };
+
+      confirmEmail();
+    }
+  }, [router, searchParams]);
+
   const onSubmit = (values: LoginFormValues) => {
     startTransition(async () => {
       const result = await login(values);
@@ -53,6 +83,7 @@ export function LoginForm({
         toast.error(result.error);
         return;
       }
+
       router.replace('/dashboard');
     });
   };
@@ -126,7 +157,7 @@ export function LoginForm({
                   {isPending ? 'Signing in...' : 'Sign In'}
                 </Button>
                 <p className='text-center text-sm text-muted-foreground'>
-                  Don't have an account?{' '}
+                  Don&apos;t have an account?{' '}
                   <Link href='/auth/signup' passHref>
                     <button
                       type='button'
@@ -141,7 +172,7 @@ export function LoginForm({
           </CardContent>
         </div>
 
-        {/* Right: Product Info - Using primary color */}
+        {/* Right: Product Info */}
         <div className='flex flex-col justify-center bg-primary p-8 text-center text-primary-foreground'>
           <h2 className='mb-2 text-3xl font-semibold'>QuickRef</h2>
           <p className='text-sm text-primary-foreground/90'>
