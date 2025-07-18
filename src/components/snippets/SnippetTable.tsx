@@ -27,15 +27,20 @@ import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
 import { DashboardNavbar } from '@/components/navbar/DashboardNavbar';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Snippet } from '@/types/dao';
 
+type ExtendedSnippet = Snippet & {
+  username: string;
+  description?: string;
+};
 interface SnippetTableProps {
-  showCreate?: boolean; 
+  showCreate?: boolean;
 }
 export default function SnippetTable({ showCreate }: SnippetTableProps) {
   const { user } = useUser();
   const [filterMine, setFilterMine] = useState(false);
   const [search, setSearch] = useState('');
-  const [selected, setSelected] = useState<any | null>(null);
+  const [selected, setSelected] = useState<ExtendedSnippet | null>(null);
   const queryClient = useQueryClient();
 
   const { data: snippets = [], isLoading } = useQuery({
