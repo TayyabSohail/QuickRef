@@ -1,12 +1,15 @@
 import { LoginForm } from '@/components/auth/login-form';
 import { GridSmallBackground } from '@/components/ui/GridSmallBackgroundDemo';
+import { Suspense } from 'react';
 
 export default function Login() {
   return (
     <GridSmallBackground>
-      <div>
-        <LoginForm />
-      </div>
+      <Suspense fallback={<div>Loading...</div>}>
+        <div>
+          <LoginForm />
+        </div>
+      </Suspense>
     </GridSmallBackground>
   );
 }
