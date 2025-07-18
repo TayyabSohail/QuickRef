@@ -5,15 +5,15 @@ import { getSnippets } from '@/actions/snippet';
 import SnippetCard from './SnippetCard';
 import SnippetModal from './SnippetModal';
 import { useState } from 'react';
-import type { Snippet } from '@/types/dao';
+import type { ExtendedSnippet } from '@/types/dao';
 
 export default function SnippetList() {
-  const { data = [] } = useQuery<Snippet[]>({
+  const { data = [] } = useQuery<ExtendedSnippet[]>({
     queryKey: ['snippets'],
     queryFn: () => getSnippets(),
   });
 
-  const [selected, setSelected] = useState<Snippet | null>(null);
+  const [selected, setSelected] = useState<ExtendedSnippet | null>(null);
 
   return (
     <div className='grid gap-4'>

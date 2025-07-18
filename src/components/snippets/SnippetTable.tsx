@@ -27,12 +27,8 @@ import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
 import { DashboardNavbar } from '@/components/navbar/DashboardNavbar';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Snippet } from '@/types/dao';
+import type { ExtendedSnippet } from '@/types/dao';
 
-type ExtendedSnippet = Snippet & {
-  username: string;
-  description?: string;
-};
 interface SnippetTableProps {
   showCreate?: boolean;
 }

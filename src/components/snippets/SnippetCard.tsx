@@ -1,10 +1,6 @@
 import { Button } from '@/components/ui/button';
-import type { Snippet } from '@/types/dao';
+import type { ExtendedSnippet } from '@/types/dao';
 
-type ExtendedSnippet = Snippet & {
-  username: string;
-  description?: string;
-};
 
 type SnippetCardProps = {
   snippet: ExtendedSnippet;

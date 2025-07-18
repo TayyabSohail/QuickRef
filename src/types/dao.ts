@@ -28,3 +28,8 @@ export type WhitelistUser = Pick<
 > & {
   approved: boolean;
 };
+
+export type ExtendedSnippet = Snippet & {
+  username: string;
+  description?: string;
+};
