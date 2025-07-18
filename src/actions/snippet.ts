@@ -17,7 +17,7 @@ export async function createSnippet(data: z.infer<typeof snippetSchema>) {
     },
   ]);
 
-  if (error) return { error: error.message };
+  if (error) throw new Error(error.message);
   return { success: true };
 }
 
@@ -52,7 +52,7 @@ export async function updateSnippet(
     .from('snippets')
     .update(updates)
     .eq('id', id);
-  if (error) return { error: error.message };
+  if (error) throw new Error(error.message);
   return { success: true };
 }
 
