@@ -1,7 +1,15 @@
 import { useQuery } from '@tanstack/react-query';
 import { getSnippets } from '@/actions/snippet';
 
-export const useSnippets = (filterMine: boolean, searchQuery: string) => {
+type SnippetQueryParams = {
+  filterMine: boolean;
+  searchQuery: string;
+};
+
+export const useSnippets = ({
+  filterMine,
+  searchQuery,
+}: SnippetQueryParams) => {
   return useQuery({
     queryKey: ['snippets', filterMine, searchQuery],
     queryFn: () => getSnippets(filterMine, searchQuery),
