@@ -67,11 +67,7 @@ export async function login(formData: z.infer<typeof loginSchema>) {
 export async function resetPassword(email: string) {
   const supabase = await createSupabaseServerClient();
 
-  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?type=recovery`;
-
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
-    redirectTo,
-  });
+  const { error } = await supabase.auth.resetPasswordForEmail(email);
 
   return { error };
 }

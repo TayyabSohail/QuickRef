@@ -31,7 +31,8 @@ export function ResetPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const accessToken = searchParams.get('access_token');
+  const code = searchParams.get('code');
+  const type = searchParams.get('type');
   const supabase = createSupabaseBrowserClient();
 
   const form = useForm<ResetPasswordFormSchema>({
@@ -43,18 +44,28 @@ export function ResetPasswordForm() {
   });
 
   const onSubmit = (values: ResetPasswordFormSchema) => {
-    if (!accessToken) {
-      toast.error('Invalid or missing token');
+    if (!code || type !== 'recovery') {
+      toast.error('Invalid or expired recovery link.');
       return;
     }
 
     startTransition(async () => {
-      const { error } = await supabase.auth.updateUser({
+      // 1. Exchange the recovery code for a session
+      const { data, error: exchangeError } =
+        await supabase.auth.exchangeCodeForSession(code);
+
+      if (exchangeError) {
+        toast.error(exchangeError.message);
+        return;
+      }
+
+      // 2. Now we can update the password because session is active
+      const { error: updateError } = await supabase.auth.updateUser({
         password: values.password,
       });
 
-      if (error) {
-        toast.error(error.message);
+      if (updateError) {
+        toast.error(updateError.message);
       } else {
         toast.success('Password updated!');
         router.push('/auth/login');
