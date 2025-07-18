@@ -1,7 +1,7 @@
 'use client';
 
-import { useTransition, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
@@ -35,7 +35,6 @@ export function LoginForm({
   ...props
 }: React.ComponentProps<'div'>) {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
   const form = useForm<LoginFormValues>({
@@ -45,35 +44,6 @@ export function LoginForm({
       password: '',
     },
   });
-
-  // ✅ Confirm email if token is present
-  useEffect(() => {
-    const token_hash = searchParams.get('token_hash');
-    const type = searchParams.get('type');
-
-    if (type === 'signup' && token_hash) {
-      const confirmEmail = async () => {
-        const res = await fetch('/api/auth/confirm-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token_hash }),
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-          toast.success('Email confirmed! You can now log in.');
-        } else {
-          toast.error(data.error || 'Confirmation failed.');
-        }
-
-        // Clean URL
-        router.replace('/auth/login');
-      };
-
-      confirmEmail();
-    }
-  }, [router, searchParams]);
 
   const onSubmit = (values: LoginFormValues) => {
     startTransition(async () => {
@@ -178,7 +148,7 @@ export function LoginForm({
           <p className='text-sm text-primary-foreground/90'>
             Your personal snippet manager
             <br />
-            save, search, and organize code effortlessly.
+            Save, search, and organize code effortlessly.
           </p>
         </div>
       </Card>

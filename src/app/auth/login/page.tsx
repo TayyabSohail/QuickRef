@@ -12,9 +12,17 @@ function LoginWrapper() {
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const success = searchParams.get('success');
-    if (success === 'confirmed') {
+    const type = searchParams.get('type');
+    const token_hash = searchParams.get('token_hash');
+    const error =
+      searchParams.get('error_description') || searchParams.get('error');
+
+    if (type === 'signup' && token_hash) {
       toast.success('✅ Email confirmed! You can now log in.');
+    }
+
+    if (error) {
+      toast.error(`❌ ${error}`);
     }
   }, [searchParams]);
 
