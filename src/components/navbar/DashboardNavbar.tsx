@@ -5,6 +5,7 @@ import { ModeToggle } from '../ui/ModeToggle';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { LogOut, Search } from 'lucide-react';
+import { supabase } from '@/lib/supabase/client';
 
 interface DashboardNavbarProps {
   search: string;
@@ -15,25 +16,25 @@ export function DashboardNavbar({ search, setSearch }: DashboardNavbarProps) {
   const router = useRouter();
 
   const handleLogout = async () => {
+    await supabase.auth.signOut();
+
     await fetch('/auth/logout', {
       method: 'GET',
       credentials: 'include',
     });
 
-    router.push('/');
+    window.location.href = '/?logged_out=true';
   };
 
   return (
     <nav className='fixed inset-x-0 top-0 z-50 mx-auto flex h-16 w-full items-center justify-between border-b-4 border-border bg-background/95 px-4 backdrop-blur supports-[backdrop-filter]:bg-background/60 sm:px-6'>
       <div className='mx-auto flex w-full max-w-screen-xl items-center justify-between'>
-        {/* Logo */}
         <div className='bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-xl font-bold text-transparent'>
           QuickRef
         </div>
 
         <div className='relative mx-2 flex max-w-md flex-1 items-center'>
           <Search className='absolute left-3 h-4 w-4 text-muted-foreground' />
-
           <Input
             placeholder='Search snippets...'
             value={search}
@@ -65,7 +66,6 @@ export function DashboardNavbar({ search, setSearch }: DashboardNavbarProps) {
           )}
         </div>
 
-        {/* Right side controls */}
         <div className='flex items-center gap-2'>
           <ModeToggle />
           <Button
