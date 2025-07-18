@@ -1,7 +1,7 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { ModeToggle } from './ModeToggle';
+import { ModeToggle } from '../ui/ModeToggle';
 import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { LogOut, Search } from 'lucide-react';
