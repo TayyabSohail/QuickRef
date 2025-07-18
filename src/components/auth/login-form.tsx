@@ -105,12 +105,11 @@ export function LoginForm({
                     <FormItem>
                       <div className='flex items-center justify-between'>
                         <FormLabel>Password</FormLabel>
-                        <a
-                          href='#'
-                          className='text-sm font-medium text-muted-foreground hover:text-primary'
-                        >
-                          Forgot password?
-                        </a>
+                        <Link href='/auth/forgot-password' passHref>
+                          <span className='text-sm font-medium text-muted-foreground hover:text-primary'>
+                            Forgot password?
+                          </span>
+                        </Link>
                       </div>
                       <FormControl>
                         <Input

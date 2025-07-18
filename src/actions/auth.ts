@@ -6,7 +6,6 @@ import { z } from 'zod';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { WhitelistUser } from '@/types/dao';
 
-
 export async function register(values: z.infer<typeof registerSchema>) {
   const supabase = await createSupabaseServerClient();
 
@@ -64,4 +63,15 @@ export async function login(formData: z.infer<typeof loginSchema>) {
   }
 
   redirect('/dashboard');
+}
+export async function resetPassword(email: string) {
+  const supabase = await createSupabaseServerClient();
+
+  const redirectTo = `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?type=recovery`;
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo,
+  });
+
+  return { error };
 }

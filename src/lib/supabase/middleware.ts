@@ -66,7 +66,9 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if ((isAuthPath || isPublicOnlyPath) && user) {
+  const isCallbackPath = pathname.startsWith('/auth/callback');
+
+  if ((isAuthPath || isPublicOnlyPath) && user && !isCallbackPath) {
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
