@@ -1,40 +1,26 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
+import LoginUI from './LoginUI';
 
-import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { toast } from 'sonner';
+export default async function LoginPage({
+  searchParams,
+}: {
+  searchParams: { token_hash?: string; type?: string };
+}) {
+  const supabase = await createSupabaseServerClient();
 
-import { LoginForm } from '@/components/auth/login-form';
-import { GridSmallBackground } from '@/components/ui/GridSmallBackgroundDemo';
-import { Suspense } from 'react';
-
-function LoginWrapper() {
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const type = searchParams.get('type');
-    const token_hash = searchParams.get('token_hash');
-    const error =
-      searchParams.get('error_description') || searchParams.get('error');
-
-    if (type === 'signup' && token_hash) {
-      toast.success('✅ Email confirmed! You can now log in.');
-    }
+  if (searchParams?.token_hash && searchParams?.type === 'signup') {
+    const { error } = await supabase.auth.verifyOtp({
+      type: 'signup',
+      token_hash: searchParams.token_hash,
+    });
 
     if (error) {
-      toast.error(`❌ ${error}`);
+      return redirect(`/auth/login?error=${encodeURIComponent(error.message)}`);
     }
-  }, [searchParams]);
 
-  return <LoginForm />;
-}
+    return redirect(`/auth/login?success=confirmed`);
+  }
 
-export default function Login() {
-  return (
-    <GridSmallBackground>
-      <Suspense fallback={<div>Loading...</div>}>
-        <LoginWrapper />
-      </Suspense>
-    </GridSmallBackground>
-  );
+  return <LoginUI />;
 }
