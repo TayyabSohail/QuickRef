@@ -15,9 +15,7 @@ export function PreviewCard() {
 
           <CardContent className='pt-0'>
             <div className='relative overflow-hidden rounded-xl bg-gradient-to-br from-[hsl(var(--terminal-gradient-start))] to-[hsl(var(--terminal-gradient-end))] p-6 font-mono text-sm text-[hsl(var(--code-white))] shadow-inner'>
-              <p className='mb-3 text-[hsl(var(--muted-foreground))]'>
-                // Custom React Hook for API calls
-              </p>
+              <p className='mb-3 text-[hsl(var(--muted-foreground))]'></p>
 
               <div className='grid grid-cols-[2rem_1fr] gap-x-4'>
                 <div className='select-none text-right text-[hsl(var(--muted-foreground))]'>
@@ -65,9 +63,7 @@ export function PreviewCard() {
                       useState(true);
                     </span>
                   </div>
-                  <div className='ml-4 text-[hsl(var(--muted-foreground))]'>
-                    // Add your fetch logic here
-                  </div>
+                  <div className='ml-4 text-[hsl(var(--muted-foreground))]'></div>
                   <div>
                     <span className='text-[hsl(var(--code-purple))]'>
                       {'}'}
