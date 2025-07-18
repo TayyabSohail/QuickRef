@@ -4,10 +4,8 @@ import { loginSchema, registerSchema } from '@/schemas/auth';
 import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { WhitelistUser } from '@/types/dao';
 
-type WhitelistUser = Pick<z.infer<typeof registerSchema>, 'email' | 'name'> & {
-  approved: boolean;
-};
 
 export async function register(values: z.infer<typeof registerSchema>) {
   const supabase = await createSupabaseServerClient();

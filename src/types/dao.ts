@@ -1,5 +1,8 @@
 // types/dao.ts
 
+import { registerSchema } from '@/schemas/auth';
+import { z } from 'zod';
+
 export interface Snippet {
   id: string;
   content: string;
@@ -18,3 +21,10 @@ export interface User {
 }
 
 export type SnippetModalMode = 'view' | 'edit' | 'add';
+
+export type WhitelistUser = Pick<
+  z.infer<typeof registerSchema>,
+  'email' | 'name'
+> & {
+  approved: boolean;
+};
