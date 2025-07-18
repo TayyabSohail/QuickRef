@@ -30,8 +30,8 @@ export function ResetPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const token_hash = searchParams.get('token_hash'); // Correctly extract token_hash
-  const type = searchParams.get('type'); // Correctly extract type
+  const token_hash = searchParams.get('token_hash');
+  const type = searchParams.get('type');
 
   const form = useForm<ResetPasswordFormSchema>({
     resolver: zodResolver(resetPasswordSchema),
@@ -42,8 +42,6 @@ export function ResetPasswordForm() {
   });
 
   const onSubmit = (values: ResetPasswordFormSchema) => {
-    // You don't need to extract `token_hash` and `type` again because you already did this earlier
-
     if (!token_hash || type !== 'recovery') {
       toast.error('Invalid or expired recovery link.');
       return;

@@ -6,9 +6,7 @@ import { Database } from '@/types/supabase';
 
 export async function updateSession(request: NextRequest) {
   const url = request.nextUrl.clone();
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+  let supabaseResponse = NextResponse.next({ request });
 
   // Prevent caching
   supabaseResponse.headers.set('Cache-Control', 'no-store');
@@ -36,6 +34,7 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = url.pathname;
 
+  // Handle logout
   if (pathname === '/auth/logout') {
     await supabase.auth.signOut();
 
@@ -48,11 +47,10 @@ export async function updateSession(request: NextRequest) {
       path: '/',
     });
 
-    supabaseResponse.headers.set('Cache-Control', 'no-store');
-
     return NextResponse.redirect(new URL('/', request.url));
   }
 
+  // Get user info
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -61,14 +59,14 @@ export async function updateSession(request: NextRequest) {
   const isAuthPath = pathname.startsWith('/auth');
   const isPublicOnlyPath = pathname === '/' || pathname === '/landing';
 
+  // Redirect unauthenticated users away from protected routes
   if (isProtectedPath && !user) {
     url.pathname = '/auth/login';
     return NextResponse.redirect(url);
   }
 
-  const isCallbackPath = pathname.startsWith('/auth/callback');
-
-  if ((isAuthPath || isPublicOnlyPath) && user && !isCallbackPath) {
+  // Redirect authenticated users away from login/signup pages
+  if ((isAuthPath || isPublicOnlyPath) && user) {
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
