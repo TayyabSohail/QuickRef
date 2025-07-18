@@ -23,7 +23,7 @@ export function DashboardNavbar({ search, setSearch }: DashboardNavbarProps) {
       credentials: 'include',
     });
 
-    window.location.href = '/?logged_out=true';
+    router.replace('/');
   };
 
   return (
