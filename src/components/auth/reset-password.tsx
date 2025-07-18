@@ -3,7 +3,6 @@
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTransition } from 'react';
 import { toast } from 'sonner';
-import * as z from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -26,30 +25,16 @@ import {
 } from '@/components/ui/form';
 
 import { createSupabaseBrowserClient } from '@/lib/supabase/client';
+import { resetPasswordSchema, ResetPasswordFormSchema } from '@/schemas/auth';
 
-const resetPasswordSchema = z
-  .object({
-    password: z
-      .string()
-      .min(6, 'Password must be at least 6 characters')
-      .max(100),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ['confirmPassword'],
-  });
-
-type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
-
-export default function ResetPasswordPage() {
+export function ResetPasswordForm() {
   const [isPending, startTransition] = useTransition();
   const searchParams = useSearchParams();
   const router = useRouter();
   const accessToken = searchParams.get('access_token');
   const supabase = createSupabaseBrowserClient();
 
-  const form = useForm<ResetPasswordValues>({
+  const form = useForm<ResetPasswordFormSchema>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
       password: '',
@@ -57,7 +42,7 @@ export default function ResetPasswordPage() {
     },
   });
 
-  const onSubmit = (values: ResetPasswordValues) => {
+  const onSubmit = (values: ResetPasswordFormSchema) => {
     if (!accessToken) {
       toast.error('Invalid or missing token');
       return;

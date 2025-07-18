@@ -18,8 +18,18 @@ export const registerSchema = z
     path: ['confirmPassword'],
     message: 'Passwords do not match',
   });
+export const resetPasswordSchema = z
+  .object({
+    password: z.string().min(6, 'Password must be at least 6 characters'),
+    confirmPassword: z.string().min(6),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Passwords do not match',
+  });
 
 export type RegisterFormSchema = z.infer<typeof registerSchema>;
+export type ResetPasswordFormSchema = z.infer<typeof resetPasswordSchema>;
 
 export function useRegisterForm() {
   return useForm<RegisterFormSchema>({
