@@ -20,7 +20,7 @@ export function DashboardNavbar({ search, setSearch }: DashboardNavbarProps) {
       credentials: 'include',
     });
 
-    router.push('/auth/login');
+    router.push('/');
   };
 
   return (

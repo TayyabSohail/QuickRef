@@ -3,12 +3,16 @@
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { ModeToggle } from '../ui/ModeToggle';
 
 export function Hero() {
   const router = useRouter();
 
   return (
     <section className='px-6 py-28 text-center md:px-12 lg:px-24'>
+      <div className='absolute right-20 top-10'>
+        <ModeToggle />
+      </div>
       {/* Product name */}
       <h2
         className='mb-3 text-3xl font-medium uppercase tracking-wider'
