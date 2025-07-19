@@ -56,7 +56,9 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const isProtectedPath = pathname.startsWith('/dashboard');
-  const isAuthPath = pathname.startsWith('/auth');
+  const isAuthPath =
+    pathname.startsWith('/auth') &&
+    !pathname.startsWith('/api/auth/confirm-email');
   const isPublicOnlyPath = pathname === '/' || pathname === '/landing';
 
   // Redirect unauthenticated users away from protected routes

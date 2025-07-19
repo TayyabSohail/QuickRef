@@ -2,14 +2,13 @@ import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
+  const { searchParams, origin } = new URL(request.url);
   const token = searchParams.get('token');
   const type = searchParams.get('type');
-  const redirect_to = searchParams.get('redirect_to') || '/auth/login';
 
   if (!token || !type) {
     return NextResponse.redirect(
-      new URL('/auth/error?message=Invalid confirmation link', request.url),
+      `${origin}/auth/login?error=Invalid confirmation link`,
     );
   }
 
@@ -22,27 +21,54 @@ export async function GET(request: NextRequest) {
       type: type as 'signup' | 'email_change' | 'recovery',
     });
 
-    if (error) {
+    if (error || !data.user) {
       console.error('Email confirmation error:', error);
       return NextResponse.redirect(
-        new URL(
-          `/auth/login?error=${encodeURIComponent(error.message)}`,
-          request.url,
-        ),
+        `${origin}/auth/login?error=${encodeURIComponent(error?.message || 'Confirmation failed')}`,
       );
     }
 
-    // Email confirmed successfully
-    return NextResponse.redirect(
-      new URL(
-        `/auth/login?message=Email confirmed successfully! Please log in.`,
-        request.url,
-      ),
+    // Check if user exists in registered_users table
+    const { data: existingUser, error: fetchError } = await supabase
+      .from('registered_users')
+      .select('id')
+      .eq('id', data.user.id)
+      .single();
+
+    // If user doesn't exist in registered_users, insert them
+    if (!existingUser && fetchError?.code === 'PGRST116') {
+      const userToInsert = {
+        id: data.user.id,
+        email: data.user.email || '',
+        name: data.user.user_metadata?.name || '',
+        approved: true,
+      };
+
+      const { error: insertError } = await supabase
+        .from('registered_users')
+        .insert([userToInsert]);
+
+      if (insertError) {
+        console.error(
+          'Failed to insert user into registered_users:',
+          insertError,
+        );
+      }
+    }
+
+    // Sign out the user so they have to log in manually
+    await supabase.auth.signOut();
+
+    // Redirect to login with success message
+    const response = NextResponse.redirect(
+      `${origin}/auth/login?message=Email confirmed successfully! Please log in.`,
     );
+
+    return response;
   } catch (error) {
     console.error('Confirmation process error:', error);
     return NextResponse.redirect(
-      new URL('/auth/login?error=Confirmation failed', request.url),
+      `${origin}/auth/login?error=Confirmation failed`,
     );
   }
 }
