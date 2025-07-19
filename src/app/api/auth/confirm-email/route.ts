@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server';
+import { ensureUserInDatabase } from '@/actions/auth';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
@@ -28,43 +29,22 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Check if user exists in registered_users table
-    const { data: existingUser, error: fetchError } = await supabase
-      .from('registered_users')
-      .select('id')
-      .eq('id', data.user.id)
-      .single();
-
-    // If user doesn't exist in registered_users, insert them
-    if (!existingUser && fetchError?.code === 'PGRST116') {
-      const userToInsert = {
+    // Use the reusable function from auth.ts
+    try {
+      await ensureUserInDatabase({
         id: data.user.id,
         email: data.user.email || '',
         name: data.user.user_metadata?.name || '',
         approved: true,
-      };
-
-      const { error: insertError } = await supabase
-        .from('registered_users')
-        .insert([userToInsert]);
-
-      if (insertError) {
-        console.error(
-          'Failed to insert user into registered_users:',
-          insertError,
-        );
-      }
+      });
+    } catch (dbError) {
+      console.error('Database insertion failed:', dbError);
     }
-
-    // Sign out the user so they have to log in manually
     await supabase.auth.signOut();
 
-    // Redirect to login with success message
-    const response = NextResponse.redirect(
+    return NextResponse.redirect(
       `${origin}/auth/login?message=Email confirmed successfully! Please log in.`,
     );
-
-    return response;
   } catch (error) {
     console.error('Confirmation process error:', error);
     return NextResponse.redirect(

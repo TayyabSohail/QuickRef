@@ -1,10 +1,51 @@
 'use server';
 
 import { loginSchema, registerSchema } from '@/schemas/auth';
-import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { createSupabaseServerClient } from '@/lib/supabase/server';
 import { WhitelistUser } from '@/types/dao';
+
+export async function ensureUserInDatabase(userData: {
+  id: string;
+  email: string;
+  name: string;
+  approved?: boolean;
+}) {
+  const supabase = await createSupabaseServerClient();
+
+  // Check if user already exists in registered_users
+  const { data: existingUser, error: fetchError } = await supabase
+    .from('registered_users')
+    .select('id')
+    .eq('id', userData.id)
+    .single();
+
+  // If user doesn't exist, insert them
+  if (!existingUser && fetchError?.code === 'PGRST116') {
+    const userToInsert: WhitelistUser & { id: string } = {
+      id: userData.id,
+      email: userData.email,
+      name: userData.name,
+      approved: userData.approved ?? true,
+    };
+
+    const { error: insertError } = await supabase
+      .from('registered_users')
+      .insert([userToInsert]);
+
+    if (insertError) {
+      console.error(
+        'Failed to insert user into registered_users:',
+        insertError,
+      );
+      throw new Error('Failed to add user to database');
+    }
+
+    return { inserted: true, user: userToInsert };
+  }
+
+  return { inserted: false, user: existingUser };
+}
 
 export async function register(values: z.infer<typeof registerSchema>) {
   const supabase = await createSupabaseServerClient();
@@ -16,63 +57,24 @@ export async function register(values: z.infer<typeof registerSchema>) {
       data: { name: values.name },
     },
   });
+
   if (authError || !data.user) {
     return { error: authError?.message || 'Signup failed' };
   }
 
-  const user = data.user;
+  try {
+    await ensureUserInDatabase({
+      id: data.user.id,
+      email: values.email,
+      name: values.name,
+      approved: true,
+    });
 
-  const userToInsert: WhitelistUser & { id: string } = {
-    id: user.id,
-    email: values.email,
-    name: values.name,
-    approved: true,
-  };
-
-  const { error: dbError } = await supabase
-    .from('registered_users')
-    .insert([userToInsert]);
-
-  if (dbError) {
-    console.error('DB Insert Error:', dbError);
+    return { success: true };
+  } catch (error) {
     return { error: 'User created but failed to add to whitelist.' };
   }
-
-  return { success: true };
 }
-
-// export async function login(values: z.infer<typeof loginSchema>) {
-//   const supabase = await createSupabaseServerClient();
-
-//   const { data, error: authError } = await supabase.auth.signInWithPassword({
-//     email: values.email,
-//     password: values.password,
-//   });
-
-//   if (authError || !data.session?.user) {
-//     return { error: authError?.message ?? 'Login failed' };
-//   }
-
-//   const user = data.session.user;
-
-//   // 👇 Check if user already exists in registered_users
-//   const { data: existing, error: fetchError } = await supabase
-//     .from('registered_users')
-//     .select('id')
-//     .eq('id', user.id)
-//     .single();
-
-//   if (!existing && !fetchError) {
-//     // 👇 Insert user into registered_users AFTER login
-//     await supabase.from('registered_users').insert({
-//       id: user.id,
-//       email: user.email,
-//       name: user.user_metadata.name ?? '', // adjust if needed
-//     });
-//   }
-
-//   return { success: true };
-// }
 
 export async function login(formData: z.infer<typeof loginSchema>) {
   const supabase = await createSupabaseServerClient();
@@ -93,11 +95,12 @@ export async function login(formData: z.infer<typeof loginSchema>) {
   if (!match) {
     return { error: 'You are not authorized to log in' };
   }
+
+  return { success: true };
 }
+
 export async function resetPassword(email: string) {
   const supabase = await createSupabaseServerClient();
-
   const { error } = await supabase.auth.resetPasswordForEmail(email);
-
   return { error };
 }
