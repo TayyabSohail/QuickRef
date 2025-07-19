@@ -59,7 +59,7 @@ export async function updateSession(request: NextRequest) {
   const isAuthPath =
     pathname.startsWith('/auth') &&
     !pathname.startsWith('/api/auth/confirm-email');
-  const isPublicOnlyPath = pathname === '/' || pathname === '/landing';
+  const isPublicOnlyPath = pathname === '/'
 
   // Redirect unauthenticated users away from protected routes
   if (isProtectedPath && !user) {

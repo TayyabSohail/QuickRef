@@ -19,14 +19,14 @@ export async function POST(req: Request) {
     });
 
     if (verifyError) {
-      return NextResponse.json({ error: verifyError.message }, { status: 400 });
+      return NextResponse.json({ error: Error }, { status: 400 });
     }
 
     // Step 2: Update password (after session is active)
     const { error: updateError } = await supabase.auth.updateUser({ password });
 
     if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 400 });
+      return NextResponse.json({ error: Error}, { status: 400 });
     }
 
     return NextResponse.json({ success: true });
