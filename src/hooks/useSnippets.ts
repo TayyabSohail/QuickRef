@@ -1,10 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { getSnippets } from '@/actions/snippet';
-
-type SnippetQueryParams = {
-  filterMine: boolean;
-  searchQuery: string;
-};
+import { SnippetQueryParams } from '@/types/dao';
 
 export const useSnippets = ({
   filterMine,

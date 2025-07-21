@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getSnippets, deleteSnippet } from '@/actions/snippet';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { deleteSnippet } from '@/actions/snippet';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import SnippetSheet from './SnippetSheet';
+import { useSnippets } from '@/hooks/useSnippets';
 import {
   Table,
   TableHeader,
@@ -35,13 +36,14 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
   const { user } = useUser();
   const [filterMine, setFilterMine] = useState(false);
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search, 300);
   const [selected, setSelected] = useState<ExtendedSnippet | null>(null);
   const queryClient = useQueryClient();
   const debouncedSelected = useDebounce(selected, 200);
 
-  const { data: snippets = [], isLoading } = useQuery({
-    queryKey: ['snippets', filterMine, search],
-    queryFn: () => getSnippets(filterMine, search),
+  const { data: snippets = [], isLoading } = useSnippets({
+    filterMine,
+    searchQuery: debouncedSearch,
   });
 
   const deleteMutation = useMutation({

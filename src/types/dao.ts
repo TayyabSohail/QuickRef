@@ -37,3 +37,8 @@ export type ExtendedSnippet = Snippet & {
 export interface SnippetTableProps {
   showCreate?: boolean;
 }
+
+export type SnippetQueryParams = {
+  filterMine: boolean;
+  searchQuery: string;
+};
