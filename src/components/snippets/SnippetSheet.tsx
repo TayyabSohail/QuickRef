@@ -7,7 +7,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { z } from 'zod';
 import Editor from '@monaco-editor/react';
 import { toast } from 'sonner';
-
+import { Textarea } from '@/components/ui/textarea';
 import { snippetSchema } from '@/schemas/snippet';
 import { createSnippet } from '@/actions/snippet';
 
@@ -161,7 +161,7 @@ export default function SnippetSheet() {
             {/* Description */}
             <div className='grid gap-2'>
               <Label htmlFor='description'>Description</Label>
-              <Input
+              <Textarea
                 id='description'
                 placeholder='Describe what this snippet does...'
                 {...form.register('description')}

@@ -9,6 +9,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { snippetSchema } from '@/schemas/snippet';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '../ui/textarea';
 
 const languageOptions = [
   'javascript',
@@ -129,10 +130,9 @@ export default function SnippetFormEditor({
       {/* Description */}
       <div className='grid gap-2'>
         <Label htmlFor='description'>Description</Label>
-        <Input
+        <Textarea
           id='description'
           placeholder='Describe what this snippet does...'
-          className='border border-[hsl(var(--border))] bg-[hsl(var(--input))] text-[hsl(var(--foreground))]'
           {...form.register('description')}
           readOnly={isReadOnly}
         />
