@@ -220,7 +220,9 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
                                   </AlertDialogDescription>
                                 </AlertDialogHeader>
                                 <AlertDialogFooter>
-                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogCancel className='bg-muted text-foreground hover:bg-muted/80'>
+                                    Cancel
+                                  </AlertDialogCancel>
                                   <AlertDialogAction
                                     className='bg-destructive text-white hover:bg-destructive/90'
                                     onClick={() => {

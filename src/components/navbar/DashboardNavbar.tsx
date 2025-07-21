@@ -6,7 +6,17 @@ import { Input } from '@/components/ui/input';
 import { useRouter } from 'next/navigation';
 import { LogOut, Search } from 'lucide-react';
 import { supabase } from '@/lib/supabase/client';
-
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
 interface DashboardNavbarProps {
   search: string;
   setSearch: (val: string) => void;
@@ -68,14 +78,46 @@ export function DashboardNavbar({ search, setSearch }: DashboardNavbarProps) {
 
         <div className='flex items-center gap-2'>
           <ModeToggle />
-          <Button
-            onClick={handleLogout}
-            variant='outline'
-            className='rounded-full border-destructive/30 text-destructive hover:bg-destructive/60 hover:text-destructive-foreground'
-          >
-            <LogOut className='h-4 w-4 sm:mr-2' />
-            <span className='hidden sm:inline'>Logout</span>
-          </Button>
+
+          {/* Alert Dialog for Logout */}
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant='outline'
+                className='rounded-full border-destructive/40 text-destructive hover:bg-destructive/70 hover:text-destructive-foreground'
+              >
+                <LogOut className='h-4 w-4 sm:mr-2' />
+                <span className='hidden sm:inline'>Logout</span>
+              </Button>
+            </AlertDialogTrigger>
+
+            <AlertDialogContent className='bg-[hsl(var(--card))] text-[hsl(var(--foreground))]'>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Are you sure you want to logout?
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel className='bg-muted text-foreground hover:bg-muted/80'>
+                  Cancel
+                </AlertDialogCancel>
+                <AlertDialogAction
+                  className='bg-destructive text-destructive-foreground hover:bg-destructive/70'
+                  onClick={async () => {
+                    await supabase.auth.signOut();
+                    await fetch('/auth/logout', {
+                      method: 'GET',
+                      credentials: 'include',
+                    });
+                    router.replace('/');
+                  }}
+                >
+                  Logout
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
     </nav>
