@@ -31,7 +31,7 @@ Organize your code with tags and categories to make snippet management effortles
 
 ## 🛠️ Tech Stack
 
-- **Frontend**: Next.js 14 (App Router), TypeScript, Tailwind CSS
+- **Frontend**: Next.js 15.3 (App Router), TypeScript, Tailwind CSS
 - **UI**: ShadCN UI, Radix UI, Monaco Editor
 - **Backend**: Supabase (Auth + Database)
 - **State Management**: React Query, `next-safe-action`
