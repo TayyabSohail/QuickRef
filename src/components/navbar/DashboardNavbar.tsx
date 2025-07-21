@@ -71,7 +71,7 @@ export function DashboardNavbar({ search, setSearch }: DashboardNavbarProps) {
           <Button
             onClick={handleLogout}
             variant='outline'
-            className='rounded-full border-destructive/30 text-destructive hover:bg-destructive/10 hover:text-destructive-foreground'
+            className='rounded-full border-destructive/30 text-destructive hover:bg-destructive/60 hover:text-destructive-foreground'
           >
             <LogOut className='h-4 w-4 sm:mr-2' />
             <span className='hidden sm:inline'>Logout</span>
