@@ -1,6 +1,6 @@
 # 🚀 QuickRef
 
-**Everything you need to manage code snippets — built for developers who value speed, simplicity, and organization.**
+**Everything you need to manage code snippets built for developers who value speed, simplicity, and organization.**
 
 QuickRef is a full-stack snippet management tool powered by **Next.js**, **Supabase**, **ShadCN UI**, and **TypeScript**. It supports user roles, private/public snippet visibility, syntax highlighting, and blazing-fast search with a clean developer-friendly interface.
 
