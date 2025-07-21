@@ -69,7 +69,7 @@ export default function SnippetFormEditor({
           <Label htmlFor='language'>Language</Label>
           <select
             id='language'
-            className='rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--input))] px-3 py-2 text-[hsl(var(--foreground))]'
+            className='rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2 text-sm text-[hsl(var(--card-foreground))] ring-offset-background focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
             disabled={isReadOnly}
             value={selectedLang}
             onChange={(e) => form.setValue('language', e.target.value)}
@@ -87,7 +87,7 @@ export default function SnippetFormEditor({
           <Label htmlFor='visibility'>Visibility</Label>
           <select
             id='visibility'
-            className='rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--input))] px-3 py-2 text-[hsl(var(--foreground))]'
+            className='rounded-md border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-3 py-2 text-sm text-[hsl(var(--card-foreground))] ring-offset-background focus:outline-none focus:ring-2 focus:ring-[hsl(var(--ring))] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50'
             disabled={isReadOnly}
             value={form.watch('visibility')}
             onChange={(e) =>
