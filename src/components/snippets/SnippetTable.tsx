@@ -28,16 +28,16 @@ import { cn } from '@/lib/utils';
 import { DashboardNavbar } from '@/components/navbar/DashboardNavbar';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ExtendedSnippet } from '@/types/dao';
+import { useDebounce } from '@/hooks/useDebounce';
+import { SnippetTableProps } from '@/types/dao';
 
-interface SnippetTableProps {
-  showCreate?: boolean;
-}
 export default function SnippetTable({ showCreate }: SnippetTableProps) {
   const { user } = useUser();
   const [filterMine, setFilterMine] = useState(false);
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<ExtendedSnippet | null>(null);
   const queryClient = useQueryClient();
+  const debouncedSelected = useDebounce(selected, 200);
 
   const { data: snippets = [], isLoading } = useQuery({
     queryKey: ['snippets', filterMine, search],
@@ -211,13 +211,13 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
         </Card>
       </div>
 
-      {selected && (
+      {debouncedSelected && (
         <SnippetModal
-          snippet={selected}
+          snippet={debouncedSelected}
           onClose={() => setSelected(null)}
           mode={
-            user?.id === selected?.user_id
-              ? selected.id
+            user?.id === debouncedSelected?.user_id
+              ? debouncedSelected.id
                 ? 'edit'
                 : 'add'
               : 'view'
