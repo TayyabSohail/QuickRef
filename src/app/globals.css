@@ -19,13 +19,15 @@ body {
   --secondary: 210 16% 93%;
   --secondary-foreground: 222 47% 11%;
 
---primary: 160 75% 40%; /* Deep emerald */
---primary-foreground: 160 100% 95%;
+  --primary: 160 75% 40%; /* Deep emerald */
+  --primary-foreground: 160 100% 95%;
 
---destructive: 0 100% 50%;
---destructive-foreground: 0 0% 100%;
+  --destructive: 0 100% 50%;
+  --destructive-foreground: 0 0% 100%;
 
-
+  --muted: 0 0% 90%; /* light gray */
+  --muted-foreground: 0 0% 40%;
+  
   /* Border color */
   --border: 0 0% 90%;
   --input: 210 16% 85%;
