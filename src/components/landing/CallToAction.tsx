@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-
+import { paths } from '@/constants/paths';
 export function CallToAction() {
   const router = useRouter();
 
@@ -18,12 +18,12 @@ export function CallToAction() {
           Ready to <span className='text-primary'>build faster</span>?
         </h2>
         <p className='mt-4 text-lg text-muted-foreground'>
-          Organize your snippets, share securely, and code without friction
-          all in one place.
+          Organize your snippets, share securely, and code without friction all
+          in one place.
         </p>
         <div className='mt-8'>
           <Button
-            onClick={() => router.push('/auth/signup')}
+            onClick={() => router.push(paths.auth.register)}
             size='lg'
             className='px-10 py-6 text-base font-semibold'
           >

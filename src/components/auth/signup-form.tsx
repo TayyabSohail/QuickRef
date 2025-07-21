@@ -1,9 +1,7 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { register } from '@/actions/auth';
-import { login } from '@/actions/auth';
+import { paths } from '@/constants/paths';
 import { registerSchema } from '@/schemas/auth';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -163,7 +161,7 @@ export function SignupForm({
                 <p className='text-center text-sm text-muted-foreground'>
                   Already have an account?{' '}
                   <Link
-                    href='/auth/login'
+                    href={paths.auth.login}
                     className='font-medium text-primary underline-offset-2 hover:underline'
                   >
                     Sign in

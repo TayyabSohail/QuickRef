@@ -109,7 +109,7 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
                   <TableHead className='min-w-[100px]'>Visibility</TableHead>
                   <TableHead className='min-w-[100px]'>Language</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead className='w-20 pr-4 text-right'>
+                  <TableHead className='w-20 pr-6 text-right'>
                     Actions
                   </TableHead>
                 </TableRow>

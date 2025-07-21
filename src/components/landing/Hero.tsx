@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ModeToggle } from '../ui/ModeToggle';
+import { paths } from '@/constants/paths';
 
 export function Hero() {
   const router = useRouter();
@@ -48,7 +49,7 @@ export function Hero() {
           size='lg'
           variant='default'
           className='border border-border bg-white text-black shadow-sm transition hover:bg-white hover:shadow-md'
-          onClick={() => router.push('/auth/login')}
+          onClick={() => router.push(paths.auth.login)}
         >
           Sign In
         </Button>

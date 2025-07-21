@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { paths } from '@/constants/paths';
 import {
   Card,
   CardContent,
@@ -55,7 +56,7 @@ export function LoginForm({
         return;
       }
 
-      router.replace('/dashboard');
+      router.replace(paths.dashboard);
     });
   };
 

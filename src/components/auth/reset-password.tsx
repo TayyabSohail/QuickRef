@@ -5,7 +5,7 @@ import { useTransition } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
+import { paths } from '@/constants/paths';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ControlledPasswordInput } from '../ui/form/controlled-password-input';
@@ -69,7 +69,7 @@ export function ResetPasswordForm() {
       }
 
       toast.success('Password updated!');
-      router.push('/auth/login');
+      router.push(paths.auth.login);
     });
   };
   return (
