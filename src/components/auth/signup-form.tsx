@@ -5,6 +5,7 @@ import { paths } from '@/constants/paths';
 import { registerSchema } from '@/schemas/auth';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { ControlledPasswordInput } from '../ui/form/controlled-password-input';
 import {
   Card,
   CardContent,
@@ -24,7 +25,6 @@ import {
 import Link from 'next/link';
 import * as z from 'zod';
 import { useState, useTransition } from 'react';
-import { toast } from 'sonner';
 import { useRegisterForm } from '@/schemas/auth';
 import { useRouter } from 'next/navigation';
 
@@ -43,7 +43,7 @@ export function SignupForm({
   const onSubmit = async (values: FormSchema) => {
     setErrorMessage('');
     const result = await register(values);
-    router.replace('/auth/verify-email');
+    router.replace(paths.auth.verifyEmail);
   };
   return (
     <div
@@ -113,9 +113,9 @@ export function SignupForm({
                     <FormItem>
                       <FormLabel>Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type='password'
+                        <ControlledPasswordInput<FormSchema>
                           placeholder='••••••••'
+                          hideInstructions
                           {...field}
                         />
                       </FormControl>
@@ -132,9 +132,9 @@ export function SignupForm({
                     <FormItem>
                       <FormLabel>Confirm Password</FormLabel>
                       <FormControl>
-                        <Input
-                          type='password'
+                        <ControlledPasswordInput<FormSchema>
                           placeholder='••••••••'
+                          hideInstructions
                           {...field}
                         />
                       </FormControl>

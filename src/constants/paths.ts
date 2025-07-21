@@ -3,6 +3,7 @@ export const paths = {
   auth: {
     login: '/auth/login',
     register: '/auth/register',
+    verifyEmail:'/auth/verify-email',
   },
   dashboard: '/dashboard',
 } as const;
