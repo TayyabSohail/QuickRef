@@ -8,6 +8,17 @@ import { Card } from '@/components/ui/card';
 import SnippetSheet from './SnippetSheet';
 import { useSnippets } from '@/hooks/useSnippets';
 import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogFooter,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from '@/components/ui/alert-dialog';
+import {
   Table,
   TableHeader,
   TableBody,
@@ -40,6 +51,8 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
   const [selected, setSelected] = useState<ExtendedSnippet | null>(null);
   const queryClient = useQueryClient();
   const debouncedSelected = useDebounce(selected, 200);
+  const [snippetToDelete, setSnippetToDelete] =
+    useState<ExtendedSnippet | null>(null);
 
   const { data: snippets = [], isLoading } = useSnippets({
     filterMine,
@@ -185,14 +198,45 @@ export default function SnippetTable({ showCreate }: SnippetTableProps) {
 
                           {/* Trash Button (render invisible if not owner) */}
                           {user?.id === snippet.user_id ? (
-                            <Button
-                              variant='ghost'
-                              size='icon'
-                              className='h-7 w-7 rounded-full p-0 text-destructive hover:bg-destructive/10'
-                              onClick={() => deleteMutation.mutate(snippet.id)}
-                            >
-                              <Trash className='h-3.5 w-3.5' />
-                            </Button>
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant='ghost'
+                                  size='icon'
+                                  className='h-7 w-7 rounded-full p-0 text-destructive hover:bg-destructive/10'
+                                  onClick={() => setSnippetToDelete(snippet)}
+                                >
+                                  <Trash className='h-3.5 w-3.5' />
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent className='border border-[hsl(var(--border))] bg-[hsl(var(--card))] text-[hsl(var(--foreground))]'>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Are you sure?
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    This will permanently delete your snippet.
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    className='bg-destructive text-white hover:bg-destructive/90'
+                                    onClick={() => {
+                                      if (snippetToDelete) {
+                                        deleteMutation.mutate(
+                                          snippetToDelete.id,
+                                        );
+                                        setSnippetToDelete(null);
+                                      }
+                                    }}
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
                           ) : (
                             <div className='h-7 w-7' /> // Invisible placeholder to keep alignment
                           )}
