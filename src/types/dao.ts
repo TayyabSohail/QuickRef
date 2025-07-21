@@ -33,3 +33,7 @@ export type ExtendedSnippet = Snippet & {
   username: string;
   description?: string;
 };
+
+export interface SnippetTableProps {
+  showCreate?: boolean;
+}
