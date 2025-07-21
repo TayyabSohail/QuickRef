@@ -1,9 +1,16 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { z } from 'zod';
+import Editor from '@monaco-editor/react';
+import { toast } from 'sonner';
+
+import { snippetSchema } from '@/schemas/snippet';
+import { createSnippet } from '@/actions/snippet';
+
 import {
   Sheet,
   SheetContent,
@@ -14,14 +21,16 @@ import {
   SheetTrigger,
   SheetClose,
 } from '@/components/ui/sheet';
-import Editor from '@monaco-editor/react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { snippetSchema } from '@/schemas/snippet';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createSnippet } from '@/actions/snippet';
-import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 const languageOptions = [
   'javascript',
@@ -86,40 +95,48 @@ export default function SnippetSheet() {
         <div className='flex-1 overflow-y-auto'>
           <form
             onSubmit={form.handleSubmit(handleSubmit)}
-            className='flex flex-col gap-4 bg-[hsl(var(--card))] py-4 text-[hsl(var(--card-foreground))]'
+            className='flex flex-col gap-4 py-4'
           >
             {/* Language */}
             <div className='grid gap-2'>
               <Label htmlFor='language'>Language</Label>
-              <select
-                id='language'
-                className='rounded-md border px-3 py-2'
+              <Select
                 value={selectedLang}
-                {...form.register('language')}
-                onChange={(e) => {
-                  setSelectedLang(e.target.value);
-                  form.setValue('language', e.target.value);
+                onValueChange={(val) => {
+                  setSelectedLang(val);
+                  form.setValue('language', val);
                 }}
               >
-                {languageOptions.map((lang) => (
-                  <option key={lang} value={lang}>
-                    {lang}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder='Select language' />
+                </SelectTrigger>
+                <SelectContent>
+                  {languageOptions.map((lang) => (
+                    <SelectItem key={lang} value={lang}>
+                      {lang}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Visibility */}
             <div className='grid gap-2'>
               <Label htmlFor='visibility'>Visibility</Label>
-              <select
-                id='visibility'
-                className='rounded-md border px-3 py-2'
-                {...form.register('visibility')}
+              <Select
+                value={form.watch('visibility')}
+                onValueChange={(val) =>
+                  form.setValue('visibility', val as 'public' | 'private')
+                }
               >
-                <option value='public'>Public</option>
-                <option value='private'>Private</option>
-              </select>
+                <SelectTrigger>
+                  <SelectValue placeholder='Select visibility' />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value='public'>Public</SelectItem>
+                  <SelectItem value='private'>Private</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             {/* Code Editor */}
@@ -157,7 +174,9 @@ export default function SnippetSheet() {
                 {mutation.isPending ? 'Saving...' : 'Save Snippet'}
               </Button>
               <SheetClose asChild>
-                <Button variant='outline'>Cancel</Button>
+                <Button variant='outline' type='button'>
+                  Cancel
+                </Button>
               </SheetClose>
             </div>
           </form>
