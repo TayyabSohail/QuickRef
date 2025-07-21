@@ -2,6 +2,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
+import { QueryKeys } from '@/constants/query-keys';
 
 export const useUser = () => {
   const queryClient = useQueryClient();
@@ -24,7 +25,7 @@ export const useUser = () => {
   useEffect(() => {
     const { data: listener } = supabase.auth.onAuthStateChange(
       (_event, session) => {
-        queryClient.setQueryData(['user'], session?.user ?? null);
+        queryClient.setQueryData([QueryKeys.USER], session?.user ?? null);
       },
     );
 
