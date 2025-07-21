@@ -12,7 +12,7 @@ QuickRef is a full-stack snippet management tool powered by **Next.js**, **Supab
 Beautiful, real-time syntax highlighting for all popular programming languages using Monaco Editor.
 
 ### ⚡ Lightning Fast
-Instant search with debounce support to quickly locate your snippets by language, content, or tags.
+Instant search to quickly locate your snippets by content.
 
 ### 🔐 Secure & Private
 All snippets are stored securely. Your data stays private and encrypted using Supabase Auth and RLS (Row-Level Security).
